@@ -1,5 +1,5 @@
 <template>
-  <div class="Buysell">
+  <div class="buy-sell">
     <div class="table-name" style="text-align: left">
       <span class="letter" data-letter="O">O</span>
       <span class="letter" data-letter="r">r</span>
@@ -18,39 +18,157 @@
         <li class="nav-item">
           <a
             class="nav-link active"
-            id="home-tab"
+            id="buy-tab"
             data-toggle="tab"
-            href="#home"
+            href="#buy"
             role="tab"
-            aria-controls="home"
+            aria-controls="buy"
             aria-selected="true"
           >BUY</a>
         </li>
         <li class="nav-item">
           <a
             class="nav-link"
-            id="profile-tab"
+            id="sell-tab"
             data-toggle="tab"
-            href="#profile"
+            href="#sell"
             role="tab"
-            aria-controls="profile"
+            aria-controls="sell"
             aria-selected="false"
           >SELL</a>
         </li>
       </ul>
       <div class="tab-content" id="myTabContent">
-        <div
-          class="tab-pane fade show active"
-          id="home"
-          role="tabpanel"
-          aria-labelledby="home-tab"
-        >Buy tab</div>
-        <div
-          class="tab-pane fade"
-          id="profile"
-          role="tabpanel"
-          aria-labelledby="profile-tab"
-        >Sell tab</div>
+        <div class="tab-pane fade show active" id="buy" role="tabpanel" aria-labelledby="buy-tab">
+          <div class="row" style="margin-top:10px">
+            <div class="col-3">
+              <p align="left">Amount</p>
+            </div>
+            <div class="col-9">
+              <div class="input-group mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="0"
+                  aria-label="amount"
+                  aria-describedby="basic-addon2"
+                >
+                <div class="input-group-append">
+                  <button
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    style="background-color:White;"
+                  >Max</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-3">
+              <p align="left">Price</p>
+            </div>
+            <div class="col-9">
+              <div class="input-group mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="0"
+                  aria-label="price"
+                  aria-describedby="basic-addon2"
+                >
+                <div class="input-group-append">
+                  <button
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    style="background-color:White;"
+                  >Up</button>
+                  <button
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    style="background-color:White;"
+                  >Down</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p style="text-align:left;font-size:12px;padding-top:0px;padding-bottom:0px;">
+            Total
+            <span style="float:right;">0 won</span>
+          </p>
+          <p style="text-align:left;font-size:12px;padding-top:0px;padding-bottom:0px;">
+            Fee
+            <span style="float:right;">0 won</span>
+          </p>
+          <p style="text-align:left;font-size:12px;padding-top:0px;padding-bottom:0px;">
+            Total
+            <span style="float:right;">0 won</span>
+          </p>
+        </div>
+        <div class="tab-pane fade" id="sell" role="tabpanel" aria-labelledby="sell-tab">
+          <div class="row" style="margin-top:10px">
+            <div class="col-3">
+              <p align="left">Amount</p>
+            </div>
+            <div class="col-9">
+              <div class="input-group mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="0"
+                  aria-label="amount"
+                  aria-describedby="basic-addon2"
+                >
+                <div class="input-group-append">
+                  <button
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    style="background-color:White;"
+                  >Max</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-3">
+              <p align="left">Price</p>
+            </div>
+            <div class="col-9">
+              <div class="input-group mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="0"
+                  aria-label="price"
+                  aria-describedby="basic-addon2"
+                >
+                <div class="input-group-append">
+                  <button
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    style="background-color:White;"
+                  >Up</button>
+                  <button
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    style="background-color:White;"
+                  >Down</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p style="text-align:left;font-size:12px;padding-top:0px;padding-bottom:0px;">
+            Total
+            <span style="float:right;">0 won</span>
+          </p>
+          <p style="text-align:left;font-size:12px;padding-top:0px;padding-bottom:0px;">
+            Fee
+            <span style="float:right;">0 won</span>
+          </p>
+          <p style="text-align:left;font-size:12px;padding-top:0px;padding-bottom:0px;">
+            Total
+            <span style="float:right;">0 won</span>
+          </p>
+        </div>
       </div>
     </div>
   </div>
@@ -89,6 +207,9 @@ p {
   border: 1px solid transparent;
   color: black;
   font-size: 18px;
+}
+.nav-tabs {
+  background: $main;
 }
 
 .tab-content {
@@ -155,5 +276,12 @@ div.table-name {
 .letter:hover:after {
   transform: scale(1.08, 1) rotateX(0deg) rotateY(40deg) rotateZ(0deg)
     skew(0deg, 22deg);
+}
+
+/* WINDOW BACKGROUND */
+.buy-sell {
+  background: $sub;
+  border-radius: 15px;
+  padding-bottom: 15px;
 }
 </style>

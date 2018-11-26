@@ -1,5 +1,5 @@
 <template>
-  <div id="Price-bar" class="sticky-top">
+  <div id="price-bar" class="sticky-top">
     <p align="left">
       <span id="ratio">&ensp;{{token1}} / {{token2}}</span>&ensp;&ensp;&ensp;&ensp;
       <span id="volume">Volume: {{volume}}</span>
@@ -12,9 +12,12 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component
 export default class PriceBar extends Vue {
-  @Prop() private token1!: string;
-  @Prop() private token2!: string;
-  @Prop() private volume!: number;
+  @Prop()
+  private token1!: string;
+  @Prop()
+  private token2!: string;
+  @Prop()
+  private volume!: number;
 }
 </script>
 
@@ -32,7 +35,7 @@ export default class PriceBar extends Vue {
   font-size: 1rem;
 }
 
-#Price-bar {
+#price-bar {
   background: $main;
 }
 </style>
