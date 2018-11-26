@@ -12,12 +12,9 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component
 export default class PriceBar extends Vue {
-  @Prop()
-  private token1!: string;
-  @Prop()
-  private token2!: string;
-  @Prop()
-  private volume!: number;
+  @Prop() private token1!: string;
+  @Prop() private token2!: string;
+  @Prop() private volume!: number;
 }
 </script>
 

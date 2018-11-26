@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "fmt": "prettier '{src,public}/**/*.{vue,ts,js,json,scss}' --write"
   },
   "dependencies": {
     "@types/highcharts": "^5.0.33",
