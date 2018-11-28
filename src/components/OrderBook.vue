@@ -1,16 +1,6 @@
 <template>
   <div class="order-book">
-    <div class="table-name" style="text-align: left">
-      <span class="letter" data-letter="O">O</span>
-      <span class="letter" data-letter="r">r</span>
-      <span class="letter" data-letter="d">d</span>
-      <span class="letter" data-letter="e">e</span>
-      <span class="letter" data-letter="r">r</span>
-      <span class="letter" data-letter="B">B</span>
-      <span class="letter" data-letter="o">o</span>
-      <span class="letter" data-letter="o">o</span>
-      <span class="letter" data-letter="k">k</span>
-    </div>
+    <div class="table-name">Orderbook</div>
     <article>
       <section class="orderbook-header">
         <table width="100%">
@@ -155,7 +145,7 @@
         <div class="current-price">715.00000</div>
       </section>
 
-      <section class="side bids">
+      <section class="side bids" ref="scor">
         <table width="100%" class="table-hover">
           <tbody>
             <tr>
@@ -429,11 +419,6 @@ export default class OrderBook extends Vue {}
 @import "../styles/General.scss";
 
 .order-book {
-  font-family: sans-serif;
-  color: #eee;
-  font-size: 0.8rem;
-  padding: 0;
-  margin: 0;
   scrollbar-base-color: rgb(255, 255, 255);
   scrollbar-face-color: rgb(0, 0, 0);
   scrollbar-3dlight-color: rgb(255, 250, 250);
@@ -458,6 +443,11 @@ td {
   color: #000000;
 }
 article {
+  font-family: $font;
+  color: #eee;
+  font-size: 0.8rem;
+  padding: 0;
+  margin: 0;
   height: calc(100% - 40px);
   display: flex;
   flex-direction: column;
@@ -478,7 +468,7 @@ article {
   height: 50%;
   background: $table-background;
   font-family: $font;
-  overflow-x: auto;
+  overflow-x: hidden;
   overflow-y: scroll;
 }
 .price.sell {
@@ -489,62 +479,14 @@ article {
 }
 
 /* CONTENT NAME */
-@import url(https://fonts.googleapis.com/css?family=Lato:900);
-*,
-*:before,
-*:after {
-  box-sizing: border-box;
-}
 div.table-name {
   width: 90%;
   margin: 0 auto;
-  text-align: center;
+  text-align: left;
   height: 40px;
-}
-.letter {
-  display: inline-block;
-  font-weight: 900;
-  font-size: 25px;
-  margin: 0.2em;
-  position: relative;
-  color: #00b4f1;
-  transform-style: preserve-3d;
-  perspective: 400;
-  z-index: 1;
-}
-.letter:before,
-.letter:after {
-  position: absolute;
-  content: attr(data-letter);
-  transform-origin: top left;
-  top: 0;
-  left: 0;
-}
-.letter,
-.letter:before,
-.letter:after {
-  transition: all 0.3s ease-in-out;
-}
-.letter:before {
-  color: #fff;
-  text-shadow: -1px 0px 1px rgba(255, 255, 255, 0.8),
-    1px 0px 1px rgba(0, 0, 0, 0.8);
-  z-index: 3;
-  transform: rotateX(0deg) rotateY(-15deg) rotateZ(0deg);
-}
-.letter:after {
-  color: rgba(0, 0, 0, 0.11);
-  z-index: 2;
-  transform: scale(1.08, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg)
-    skew(0deg, 1deg);
-}
-.letter:hover:before {
-  color: #fafafa;
-  transform: rotateX(0deg) rotateY(-40deg) rotateZ(0deg);
-}
-.letter:hover:after {
-  transform: scale(1.08, 1) rotateX(0deg) rotateY(40deg) rotateZ(0deg)
-    skew(0deg, 22deg);
+  padding: 5px;
+  font-family: $font;
+  font-size: 20px;
 }
 
 /* SCROLL BAR */
