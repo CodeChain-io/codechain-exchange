@@ -2,7 +2,7 @@
   <div id="app">
     <Banner></Banner>
     <PriceBar token1="token1" token2="toekn2" volume="10"></PriceBar>
-    <Content></Content>
+    <Content class="contents"></Content>
   </div>
 </template>
 
@@ -31,8 +31,8 @@ export default class App extends Vue {}
   color: #2c3e50;
   margin-top: 0px;
   margin: 0;
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
+}
+.contents {
+  height: calc(100vh - 115px);
 }
 </style>

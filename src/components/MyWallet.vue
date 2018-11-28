@@ -86,8 +86,9 @@ div.table-name {
 
 /* WINDOW BACKGROUND */
 .wallet {
+  height: 100%;
   background: $sub;
-  border-radius: 15px;
+  border-radius: $window-radius;
   padding-bottom: 15px;
 }
 </style>

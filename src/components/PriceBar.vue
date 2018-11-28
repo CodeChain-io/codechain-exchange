@@ -27,15 +27,17 @@ export default class PriceBar extends Vue {
 
 #ratio {
   font-family: $font;
-  font-size: 1.5rem;
+  font-size: 1rem;
 }
 
 #volume {
   font-family: $font;
-  font-size: 1rem;
+  font-size: 0.75rem;
 }
 
 #price-bar {
   background: $main;
+  height: 25px;
+  margin-bottom: 15px;
 }
 </style>

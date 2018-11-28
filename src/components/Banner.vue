@@ -2,13 +2,7 @@
   <div class="banner">
     <nav class="navbar navbar-expand-lg navbar-light">
       <a class="navbar-brand" href=".">
-        <img
-          src="../assets/logo.png"
-          width="30"
-          height="30"
-          class="d-inline-block align-top"
-          alt=""
-        >CODEX
+        <img src="../assets/logo.png" width="30" height="30" class="d-inline-block align-top" alt>CODEX
       </a>
       <ul class="nav navbar-nav mx-auto">
         <li class="nav-item">
@@ -32,5 +26,7 @@ export default class Banner extends Vue {}
 @import "../styles/General.scss";
 .navbar {
   background-color: $banner;
+  padding: 0;
+  height: 40px;
 }
 </style>

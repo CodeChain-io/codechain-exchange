@@ -163,7 +163,7 @@
             <td>@mdo</td>
           </tr>
           <tr>
-            <td scope="row">1</td>
+            <td scope="row">2</td>
             <td>Mark</td>
             <td>Otto</td>
             <td>@mdo</td>
@@ -199,9 +199,15 @@ export default class History extends Vue {}
 
 /* TABLE */
 .table-container {
-  height: 15rem;
+  height: calc(100% - 25px - 40px);
   overflow: scroll;
-  overflow-x: hidden;
+  overflow-x: auto;
+}
+.table th {
+  height: 25px;
+  font-family: $font;
+  font-size: 15px;
+  padding: 0px;
 }
 .table-head {
   background: $main; /* Old browsers */
@@ -301,8 +307,9 @@ div.table-name {
 
 /* WINDOW BACKGROUND */
 .history {
+  height: 100%;
   background: $sub;
-  border-radius: 15px;
+  border-radius: $window-radius;
   padding-bottom: 15px;
 }
 </style>

@@ -103,6 +103,12 @@
             Total
             <span style="float:right;">0 won</span>
           </p>
+          <button
+            v-on:click="click('hi')"
+            type="button"
+            class="btn btn-primary btn-lg btn-block"
+            style="margin-top:10px;"
+          >BUY</button>
         </div>
         <div class="tab-pane fade" id="sell" role="tabpanel" aria-labelledby="sell-tab">
           <div class="row" style="margin-top:10px">
@@ -168,6 +174,12 @@
             Total
             <span style="float:right;">0 won</span>
           </p>
+          <button
+            v-on:click="click('hi')"
+            type="button"
+            class="btn btn-primary btn-lg btn-block"
+            style="margin-top:10px;"
+          >SELL</button>
         </div>
       </div>
     </div>
@@ -178,7 +190,11 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component
-export default class BuySell extends Vue {}
+export default class BuySell extends Vue {
+  click(msg: String) {
+    alert(msg);
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -280,8 +296,9 @@ div.table-name {
 
 /* WINDOW BACKGROUND */
 .buy-sell {
+  height: 100%;
   background: $sub;
-  border-radius: 15px;
+  border-radius: $window-radius;
   padding-bottom: 15px;
 }
 </style>

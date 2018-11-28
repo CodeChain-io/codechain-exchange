@@ -50,6 +50,9 @@ export default class Chart extends Vue {
     return {
       data: data,
       stockOptions: {
+        chart: {
+          height: 455
+        },
         rangeSelector: {
           selected: 1
         },
@@ -190,7 +193,7 @@ div.table-name {
 /* WINDOW BACKGROUND */
 .chart {
   background: $sub;
-  border-radius: 15px;
+  border-radius: $window-radius;
   padding-bottom: 15px;
 }
 </style>

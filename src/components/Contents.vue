@@ -1,29 +1,30 @@
 <template>
   <div class="contents">
-    <div class="row mb-4">
-      <div class="col-xl-3 mb-4">
-        <MyWallet></MyWallet>
+    <div class="container-fluid">
+      <div class="row mb-4 row1">
+        <div class="col-xl-3 market">
+          <Market></Market>
+        </div>
+        <div class="col-xl-3 orderbook">
+          <OrderBook></OrderBook>
+        </div>
+        <div class="col-xl-6 chart">
+          <Chart></Chart>
+        </div>
       </div>
-      <div class="col-xl-3 mb-4">
-        <OrderBook></OrderBook>
-      </div>
-      <div class="col-xl-6 mb-4">
-        <Chart></Chart>
-      </div>
-    </div>
-    <!-- Columns start at 50% wide on mobile and bump up to 33.3% wide on desktop -->
-    <div class="row mb-4">
-      <div class="col-xl-3 mb-4">
-        <MyOrder></MyOrder>
-      </div>
-      <div class="col-xl-3 mb-4">
-        <BuySell></BuySell>
-      </div>
-      <div class="col-xl-3 mb-4">
-        <Market></Market>
-      </div>
-      <div class="col-xl-3 mb-4">
-        <History></History>
+      <div class="row mb-4 row2">
+        <div class="col-xl-3 wallet">
+          <MyWallet></MyWallet>
+        </div>
+        <div class="col-xl-3 buysell">
+          <BuySell></BuySell>
+        </div>
+        <div class="col-xl-3 myorder">
+          <MyOrder></MyOrder>
+        </div>
+        <div class="col-xl-3 history">
+          <History></History>
+        </div>
       </div>
     </div>
   </div>
@@ -55,4 +56,15 @@ export default class Contents extends Vue {}
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+.row1 {
+  height: 60%;
+}
+
+.row2 {
+  height: 40%;
+}
+
+.container-fluid {
+  height: 100%;
+}
 </style>

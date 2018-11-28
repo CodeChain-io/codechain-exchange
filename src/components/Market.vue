@@ -1,176 +1,176 @@
 <template>
-    <div class="market">
-        <div class="table-name" style="text-align: left">
-            <span class="letter" data-letter="M">M</span>
-            <span class="letter" data-letter="a">a</span>
-            <span class="letter" data-letter="r">r</span>
-            <span class="letter" data-letter="k">k</span>
-            <span class="letter" data-letter="e">e</span>
-            <span class="letter" data-letter="t">t</span>
-        </div>
-        <div>
-            <table class="table mb-0 table-head">
-                <thead>
-                    <tr>
-                        <th class="row-1" scope="col">#</th>
-                        <th class="row-2" scope="col">First</th>
-                        <th class="row-3" scope="col">Last</th>
-                        <th class="row-4" scope="col">Handle</th>
-                    </tr>
-                </thead>
-            </table>
-        </div>
-        <div class="table-container">
-            <table class="table table-hover">
-                <tbody class="item">
-                    <tr>
-                        <td scope="row">1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td scope="row">1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+  <div class="market">
+    <div class="table-name" style="text-align: left">
+      <span class="letter" data-letter="M">M</span>
+      <span class="letter" data-letter="a">a</span>
+      <span class="letter" data-letter="r">r</span>
+      <span class="letter" data-letter="k">k</span>
+      <span class="letter" data-letter="e">e</span>
+      <span class="letter" data-letter="t">t</span>
     </div>
+    <div>
+      <table class="table mb-0 table-head">
+        <thead>
+          <tr>
+            <th class="row-1" scope="col">#</th>
+            <th class="row-2" scope="col">First</th>
+            <th class="row-3" scope="col">Last</th>
+            <th class="row-4" scope="col">Handle</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+    <div class="table-container">
+      <table class="table table-hover">
+        <tbody class="item">
+          <tr>
+            <td scope="row">1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <td scope="row">1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <td scope="row">1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <td scope="row">1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <td scope="row">1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <td scope="row">1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <td scope="row">1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <td scope="row">1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <td scope="row">1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <td scope="row">1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <td scope="row">1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <td scope="row">1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <td scope="row">1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <td scope="row">1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <td scope="row">1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <td scope="row">1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <td scope="row">1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <td scope="row">1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <td scope="row">1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <td scope="row">1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <td scope="row">1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <td scope="row">1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <td scope="row">1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <td scope="row">1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -201,14 +201,15 @@ export default class MyWallet extends Vue {}
 
 /* TABLE */
 .table-container {
-  height: 15rem;
+  height: calc(100% - 25px - 40px);
   overflow: scroll;
-  overflow-x: hidden;
+  overflow-x: auto;
 }
 .table-head {
   background: $main; /* Old browsers */
 }
-th {
+.table th {
+  height: 25px;
   font-family: $font;
   font-size: 15px;
   padding: 0px;
@@ -233,9 +234,6 @@ p {
 *:before,
 *:after {
   box-sizing: border-box;
-}
-body {
-  font-family: "Lato", sans-serif;
 }
 div.table-name {
   width: 90%;
@@ -291,8 +289,9 @@ div.table-name {
 
 /* WINDOW BACKGROUND */
 .market {
+  height: 100%;
   background: $sub;
-  border-radius: 15px;
+  border-radius: $window-radius;
   padding-bottom: 15px;
 }
 </style>
