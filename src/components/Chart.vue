@@ -50,9 +50,6 @@ export default class Chart extends Vue {
     return {
       data: data,
       stockOptions: {
-        chart: {
-          height: 455
-        },
         rangeSelector: {
           selected: 1
         },
@@ -186,7 +183,7 @@ div.table-name {
 
 /* CHART */
 .stock {
-  height: (9 / 16 * 100) + "%"; /* 16:9 ratio*/
+  height: calc(100% - 40px); /* 16:9 ratio*/
   margin: 0 auto;
 }
 
