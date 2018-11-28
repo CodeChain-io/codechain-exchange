@@ -192,6 +192,7 @@ div.table-name {
 
 /* WINDOW BACKGROUND */
 .chart {
+  height: 100%;
   background: $sub;
   border-radius: $window-radius;
   padding-bottom: 15px;

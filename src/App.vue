@@ -33,6 +33,6 @@ export default class App extends Vue {}
   margin: 0;
 }
 .contents {
-  height: calc(100vh - 115px);
+  height: calc(100vh - 130px);
 }
 </style>
