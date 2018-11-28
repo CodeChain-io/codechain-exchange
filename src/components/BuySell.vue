@@ -7,12 +7,7 @@
       <span class="letter" data-letter="e">e</span>
       <span class="letter" data-letter="r">r</span>
     </div>
-    <link
-      rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-      crossorigin="anonymous"
-    >
+
     <div class="tabnav">
       <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
         <li class="nav-item">
@@ -40,53 +35,55 @@
       </ul>
       <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="buy" role="tabpanel" aria-labelledby="buy-tab">
-          <div class="row" style="margin-top:10px">
-            <div class="col-3">
-              <p align="left">Amount</p>
-            </div>
-            <div class="col-9">
-              <div class="input-group mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="0"
-                  aria-label="amount"
-                  aria-describedby="basic-addon2"
-                >
-                <div class="input-group-append">
-                  <button
-                    class="btn btn-outline-secondary"
-                    type="button"
-                    style="background-color:White;"
-                  >Max</button>
+          <div class="container-fluid">
+            <div class="row" style="margin-top:10px">
+              <div class="col-3">
+                <p align="left">Amount</p>
+              </div>
+              <div class="col-9">
+                <div class="input-group mb-3">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="0"
+                    aria-label="amount"
+                    aria-describedby="basic-addon2"
+                  >
+                  <div class="input-group-append">
+                    <button
+                      class="btn btn-outline-secondary"
+                      type="button"
+                      style="background-color:White;"
+                    >Max</button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-3">
-              <p align="left">Price</p>
-            </div>
-            <div class="col-9">
-              <div class="input-group mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="0"
-                  aria-label="price"
-                  aria-describedby="basic-addon2"
-                >
-                <div class="input-group-append">
-                  <button
-                    class="btn btn-outline-secondary"
-                    type="button"
-                    style="background-color:White;"
-                  >Up</button>
-                  <button
-                    class="btn btn-outline-secondary"
-                    type="button"
-                    style="background-color:White;"
-                  >Down</button>
+            <div class="row">
+              <div class="col-3">
+                <p align="left">Price</p>
+              </div>
+              <div class="col-9">
+                <div class="input-group mb-3">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="0"
+                    aria-label="price"
+                    aria-describedby="basic-addon2"
+                  >
+                  <div class="input-group-append">
+                    <button
+                      class="btn btn-outline-secondary"
+                      type="button"
+                      style="background-color:White;"
+                    >Up</button>
+                    <button
+                      class="btn btn-outline-secondary"
+                      type="button"
+                      style="background-color:White;"
+                    >Down</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -111,53 +108,55 @@
           >BUY</button>
         </div>
         <div class="tab-pane fade" id="sell" role="tabpanel" aria-labelledby="sell-tab">
-          <div class="row" style="margin-top:10px">
-            <div class="col-3">
-              <p align="left">Amount</p>
-            </div>
-            <div class="col-9">
-              <div class="input-group mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="0"
-                  aria-label="amount"
-                  aria-describedby="basic-addon2"
-                >
-                <div class="input-group-append">
-                  <button
-                    class="btn btn-outline-secondary"
-                    type="button"
-                    style="background-color:White;"
-                  >Max</button>
+          <div class="container-fluid">
+            <div class="row" style="margin-top:10px">
+              <div class="col-3">
+                <p align="left">Amount</p>
+              </div>
+              <div class="col-9">
+                <div class="input-group mb-3">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="0"
+                    aria-label="amount"
+                    aria-describedby="basic-addon2"
+                  >
+                  <div class="input-group-append">
+                    <button
+                      class="btn btn-outline-secondary"
+                      type="button"
+                      style="background-color:White;"
+                    >Max</button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-3">
-              <p align="left">Price</p>
-            </div>
-            <div class="col-9">
-              <div class="input-group mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="0"
-                  aria-label="price"
-                  aria-describedby="basic-addon2"
-                >
-                <div class="input-group-append">
-                  <button
-                    class="btn btn-outline-secondary"
-                    type="button"
-                    style="background-color:White;"
-                  >Up</button>
-                  <button
-                    class="btn btn-outline-secondary"
-                    type="button"
-                    style="background-color:White;"
-                  >Down</button>
+            <div class="row">
+              <div class="col-3">
+                <p align="left">Price</p>
+              </div>
+              <div class="col-9">
+                <div class="input-group mb-3">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="0"
+                    aria-label="price"
+                    aria-describedby="basic-addon2"
+                  >
+                  <div class="input-group-append">
+                    <button
+                      class="btn btn-outline-secondary"
+                      type="button"
+                      style="background-color:White;"
+                    >Up</button>
+                    <button
+                      class="btn btn-outline-secondary"
+                      type="button"
+                      style="background-color:White;"
+                    >Down</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -207,9 +206,6 @@ p {
 }
 
 /* TAB NAVIGATION */
-.tabnav {
-  height: 18rem;
-}
 .tabnav .nav-tabs .nav-item .nav-link.active {
   font-family: $font;
   color: black;
@@ -224,7 +220,7 @@ p {
   color: black;
   font-size: 18px;
 }
-.nav-tabs {
+.tabnav .nav-tabs {
   background: $main;
 }
 
@@ -300,5 +296,6 @@ div.table-name {
   background: $sub;
   border-radius: $window-radius;
   padding-bottom: 15px;
+  overflow: auto;
 }
 </style>

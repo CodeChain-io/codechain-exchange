@@ -2,27 +2,27 @@
   <div class="contents">
     <div class="container-fluid">
       <div class="row mb-4 row1">
-        <div class="col-xl-3 market">
+        <div class="col-xl-3 market mb-3 order-lg-1">
           <Market></Market>
         </div>
-        <div class="col-xl-3 orderbook">
-          <OrderBook></OrderBook>
-        </div>
-        <div class="col-xl-6 chart">
+        <div class="col-xl-6 col-xl-6 chart mb-3 order-lg-3">
           <Chart></Chart>
+        </div>
+        <div class="col-xl-3 orderbook mb-3 order-lg-2">
+          <OrderBook></OrderBook>
         </div>
       </div>
       <div class="row mb-4 row2">
-        <div class="col-xl-3 wallet">
-          <MyWallet></MyWallet>
-        </div>
-        <div class="col-xl-3 buysell">
+        <div class="col-xl-3 buysell mb-3 order-lg-2">
           <BuySell></BuySell>
         </div>
-        <div class="col-xl-3 myorder">
+        <div class="col-xl-3 myorder mb-3 order-lg-3">
           <MyOrder></MyOrder>
         </div>
-        <div class="col-xl-3 history">
+        <div class="col-xl-3 wallet mb-3 order-lg-1">
+          <MyWallet></MyWallet>
+        </div>
+        <div class="col-xl-3 history mb-3 order-lg-last">
           <History></History>
         </div>
       </div>
@@ -56,12 +56,32 @@ export default class Contents extends Vue {}
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-.row1 {
-  height: 60%;
+@import "../styles/Mixin.scss";
+
+@include respond_above(lg) {
+  & {
+    .row1 {
+      height: 60%;
+    }
+
+    .row2 {
+      height: 40%;
+    }
+  }
 }
 
-.row2 {
-  height: 40%;
+@include respond_below(xs) {
+  & {
+    .market,
+    .chart,
+    .orderbook,
+    .buysell,
+    .myorder,
+    .wallet,
+    .history {
+      max-height: 22rem;
+    }
+  }
 }
 
 .container-fluid {
