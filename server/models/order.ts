@@ -31,7 +31,8 @@ export default (
       rate: DataTypes.DOUBLE,
       makerAddress: DataTypes.STRING,
       signature: DataTypes.STRING,
-      transaction: DataTypes.TEXT
+      transaction: DataTypes.TEXT,
+      marketId: DataTypes.INTEGER
     },
     {}
   );
