@@ -6,7 +6,8 @@
     "start": "ts-node ./bin/www",
     "start-dev": "nodemon",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "migration": "sequelize db:migrate"
+    "migration": "sequelize db:migrate",
+    "seed": "sequelize db:seed:all"
   },
   "dependencies": {
     "@types/body-parser": "^1.17.0",
