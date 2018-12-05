@@ -9,7 +9,8 @@ export async function create(
   rate: number,
   makerAddress: string,
   signature: string,
-  transaction: string
+  transaction: string,
+  marketId: number
 ): Promise<OrderInstance> {
   return db.Order.create({
     makerAsset,
@@ -19,7 +20,8 @@ export async function create(
     rate,
     makerAddress,
     signature,
-    transaction
+    transaction,
+    marketId
   });
 }
 

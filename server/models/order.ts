@@ -10,6 +10,7 @@ export interface OrderAttriubutes {
   makerAddress: string;
   signature: string;
   transaction: string;
+  marketId: number;
   createdAt?: string;
   updatedAt?: string;
 }

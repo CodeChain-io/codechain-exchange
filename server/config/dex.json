@@ -2,8 +2,9 @@
   "dex-address": "testDexAddress",
   "market": {
     "b2e": {
+      "id": 0,
       "fee": 1,
-      "digit": 3
+      "digit": 2
     }
   }
 }
