@@ -25,8 +25,37 @@ export async function create(
   });
 }
 
-export async function list(): Promise<OrderInstance[]> {
-  return db.Order.all();
+export async function find(
+  makerAsset?: string,
+  takerAsset?: string,
+  amount?: number,
+  filled?: number,
+  rate?: number,
+  makerAddress?: string,
+  signature?: string,
+  transaction?: string,
+  marketId?: number
+): Promise<OrderInstance[]> {
+  let where = {
+    makerAsset,
+    takerAsset,
+    amount,
+    filled,
+    rate,
+    makerAddress,
+    signature,
+    transaction,
+    marketId
+  };
+  for (const o in where) {
+    if ((<any>where)[o] === null || (<any>where)[o] === undefined) {
+      delete (<any>where)[o];
+    }
+  }
+  console.log(where);
+  return db.Order.findAll({
+    where
+  });
 }
 
 export async function destroy(id: number): Promise<void> {
