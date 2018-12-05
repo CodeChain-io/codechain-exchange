@@ -1,42 +1,30 @@
 {
   "name": "codex",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
+  "license": "MIT",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "fmt": "prettier '{src,public}/**/*.{vue,ts,js,json,scss}' --write"
+    "start": "ts-node ./bin/www",
+    "start-dev": "nodemon",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "migration": "sequelize db:migrate"
   },
   "dependencies": {
-    "@types/highcharts": "^5.0.33",
-    "bourbon": "^5.1.0",
-    "highcharts": "^6.2.0",
-    "highcharts-vue": "^1.2.0",
-    "style-loader": "^0.23.1",
-    "vue": "^2.5.17",
-    "vue-class-component": "^6.0.0",
-    "vue-property-decorator": "^7.0.0",
-    "vue-trading-view": "^1.0.1"
+    "@types/body-parser": "^1.17.0",
+    "@types/express": "^4.16.0",
+    "@types/morgan": "^1.7.35",
+    "@types/sequelize": "^4.27.32",
+    "express": "^4.16.4",
+    "morgan": "^1.9.1",
+    "pg": "^7.7.1",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^4.41.2",
+    "sequelize-typescript": "^0.6.6",
+    "ts-node": "^7.0.1",
+    "tsc": "^1.20150623.0",
+    "typescript": "^3.2.1"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.1.1",
-    "@vue/cli-plugin-typescript": "^3.1.1",
-    "@vue/cli-service": "^3.1.4",
-    "node-sass": "^4.10.0",
-    "sass-loader": "^7.1.0",
-    "style-resources-loader": "^1.2.1",
-    "typescript": "^3.0.0",
-    "vue-cli-plugin-style-resources-loader": "^0.1.3",
-    "vue-template-compiler": "^2.5.17"
-  },
-  "postcss": {
-    "plugins": {
-      "autoprefixer": {}
-    }
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
-  ]
+    "nodemon": "^1.18.7",
+    "sequelize-cli": "^5.4.0"
+  }
 }
