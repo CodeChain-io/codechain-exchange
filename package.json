@@ -7,6 +7,7 @@
     "start-dev": "nodemon",
     "test": "echo \"Error: no test specified\" && exit 1",
     "migration": "sequelize db:migrate",
+    "undo-migration": "sequelize db:migrate:undo",
     "seed": "sequelize db:seed:all"
   },
   "dependencies": {
