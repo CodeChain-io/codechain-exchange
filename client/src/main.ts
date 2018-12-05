@@ -1,8 +1,9 @@
 import Vue from "vue";
 import App from "./App.vue";
-import HighchartsVue from "highcharts-vue";
 import Highcharts from "highcharts";
-import stockInit from "highcharts/modules/stock";
+
+const HighchartsVue = require("highcharts-vue");
+const stockInit = require("highcharts/modules/stock");
 
 stockInit(Highcharts);
 
