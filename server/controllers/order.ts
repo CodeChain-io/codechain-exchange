@@ -1,5 +1,6 @@
 import db from "../models";
 import { OrderInstance } from "../models/order";
+import { Op } from "sequelize";
 
 export async function create(
   makerAsset: string,
@@ -56,6 +57,51 @@ export async function find(
   return db.Order.findAll({
     where
   });
+}
+
+// Get orders in range
+export async function orderbook(
+  range: number,
+  marketPrice: number
+): Promise<OrderInstance[]> {
+  let upOrders: OrderInstance[] = [];
+  let downOrders: OrderInstance[] = [];
+  let pivot: number = 0;
+
+  for (let i = 0; i < range; i++) {
+    await db.Order.min("rate", {
+      where: {
+        rate: { [Op.and]: [{ [Op.gt]: marketPrice }, { [Op.gt]: pivot }] }
+      }
+    }).then(async min => {
+      pivot = min;
+      const orders = await db.Order.findAll({
+        where: {
+          rate: min
+        }
+      });
+      upOrders = upOrders.concat(orders);
+    });
+  }
+
+  pivot = Number.MAX_VALUE;
+  for (let i = 0; i < range; i++) {
+    await db.Order.max("rate", {
+      where: {
+        rate: { [Op.and]: [{ [Op.lt]: marketPrice }, { [Op.lt]: pivot }] }
+      }
+    }).then(async max => {
+      pivot = max;
+      const orders = await db.Order.findAll({
+        where: {
+          rate: max
+        }
+      });
+      downOrders = downOrders.concat(orders);
+    });
+  }
+
+  return downOrders.reverse().concat(upOrders);
 }
 
 export async function destroy(id: number): Promise<void> {
