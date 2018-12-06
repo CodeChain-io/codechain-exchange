@@ -1,4 +1,4 @@
-# codex
+# codex client
 
 ## Project setup
 ```
