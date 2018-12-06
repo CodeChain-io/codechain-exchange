@@ -42,6 +42,13 @@ export default function route(app: express.Express) {
       .catch(err => res.status(400).send(err));
   });
 
+  app.get("/api/orderbook", (req, res) => {
+    controllers.orderController
+      .orderbook(req.body.range, req.body.marketPrice)
+      .then(orders => res.status(201).send(orders))
+      .catch(err => res.status(400).send(err));
+  });
+
   app.delete("/api/order/:orderId", (req, res) => {
     controllers.orderController
       .destroy(req.params.orderId)
