@@ -8,7 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "migration": "sequelize db:migrate; sequelize db:seed:all",
     "undo-migration": "sequelize db:migrate:undo",
-    "undo-seed": "sequelize db:seed:all"
+    "undo-seed": "sequelize db:seed:all",
+    "fmt": "tslint -p . --fix && prettier 'server/**/*.{ts,json}' --write"
   },
   "dependencies": {
     "@types/body-parser": "^1.17.0",
@@ -28,6 +29,9 @@
   },
   "devDependencies": {
     "nodemon": "^1.18.7",
-    "sequelize-cli": "^5.4.0"
+    "sequelize-cli": "^5.4.0",
+    "prettier": "1.14.2",
+    "tslint": "^5.11.0",
+    "tslint-config-prettier": "^1.15.0"
   }
 }

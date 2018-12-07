@@ -1,5 +1,5 @@
-import { controllers } from "../controllers";
 import * as express from "express";
+import { controllers } from "../controllers";
 
 export default function route(app: express.Express) {
   app.get("/api", (_req, res) =>

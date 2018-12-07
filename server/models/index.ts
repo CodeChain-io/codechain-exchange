@@ -1,7 +1,7 @@
-import * as Sequelize from "sequelize";
 import * as fs from "fs";
 import * as path from "path";
-import { OrderInstance, OrderAttriubutes } from "./order";
+import * as Sequelize from "sequelize";
+import { OrderAttriubutes, OrderInstance } from "./order";
 
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || "development";
@@ -26,8 +26,8 @@ fs.readdirSync(__dirname)
       file.indexOf(".") !== 0 && file !== basename && file.slice(-3) === ".ts"
   )
   .forEach(file => {
-    const model = sequelize["import"](path.join(__dirname, file));
-    db[(model as any).name] = model;
+    const mod = sequelize.import(path.join(__dirname, file));
+    db[(mod as any).name] = mod;
   });
 
 Object.keys(db).forEach(modelName => {
@@ -39,8 +39,8 @@ Object.keys(db).forEach(modelName => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-interface model {
+interface Model {
   Order: Sequelize.Model<OrderInstance, OrderAttriubutes>;
 }
 
-export default db as model;
+export default db as Model;

@@ -36,7 +36,7 @@ export default (
     },
     {}
   );
-  Order.associate = function(_models) {
+  Order.associate = _models => {
     // associations can be defined here
   };
   return Order;
