@@ -3,6 +3,7 @@ node_modules
 /dist
 ./client/node_modules
 ./client/dist/*
+/log
 
 # local env files
 .env.local
