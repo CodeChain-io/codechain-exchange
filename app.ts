@@ -1,9 +1,9 @@
+import * as bodyParser from "body-parser";
 import * as express from "express";
 import * as logger from "morgan";
-import * as bodyParser from "body-parser";
-import route from "./server/routes";
-import rfs from "rotating-file-stream";
 import * as path from "path";
+import rfs from "rotating-file-stream";
+import route from "./server/routes";
 
 // Set up the express app
 const app = express();
@@ -12,7 +12,7 @@ const app = express();
 app.use(logger("dev"));
 
 // create a rotating write stream
-var accessLogStream = rfs("access.log", {
+const accessLogStream = rfs("access.log", {
   interval: "1d", // rotate daily
   path: path.join(__dirname, "log")
 });

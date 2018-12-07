@@ -1,6 +1,6 @@
+import { Op } from "sequelize";
 import db from "../models";
 import { OrderInstance } from "../models/order";
-import { Op } from "sequelize";
 
 export async function create(
   makerAsset: string,
@@ -37,7 +37,7 @@ export async function find(
   transaction?: string,
   marketId?: number
 ): Promise<OrderInstance[]> {
-  let where = {
+  const where = {
     makerAsset,
     takerAsset,
     amount,
@@ -49,8 +49,8 @@ export async function find(
     marketId
   };
   for (const o in where) {
-    if ((<any>where)[o] === null || (<any>where)[o] === undefined) {
-      delete (<any>where)[o];
+    if ((where as any)[o] === null || (where as any)[o] === undefined) {
+      delete (where as any)[o];
     }
   }
   console.log(where);
