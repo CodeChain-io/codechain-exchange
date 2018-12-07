@@ -1,4 +1,3 @@
-// This will be our application entry. We'll setup our server here.
 import * as http from "http";
 import app from "../app";
 
