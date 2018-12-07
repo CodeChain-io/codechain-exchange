@@ -4,11 +4,11 @@ import * as express from "express";
 export default function route(app: express.Express) {
   app.get("/api", (_req, res) =>
     res.status(200).send({
-      message: "Welcome to the Todos API!"
+      message: "Welcome to the DEX API!"
     })
   );
 
-  app.post("/api/order", async (req, res) => {
+  app.post("/api/order/create", async (req, res) => {
     controllers.orderController
       .create(
         req.body.makerAsset,
@@ -25,7 +25,7 @@ export default function route(app: express.Express) {
       .catch(err => res.status(400).send(err));
   });
 
-  app.get("/api/order", (req, res) => {
+  app.get("/api/order/find", (req, res) => {
     controllers.orderController
       .find(
         req.body.makerAsset,
@@ -49,7 +49,14 @@ export default function route(app: express.Express) {
       .catch(err => res.status(400).send(err));
   });
 
-  app.delete("/api/order/:orderId", (req, res) => {
+  app.get("/api/order/find/:makerAddress", (req, res) => {
+    controllers.orderController
+      .find(null, null, null, null, null, req.params.makerAddress)
+      .then(orders => res.status(201).send(orders))
+      .catch(err => res.status(400).send(err));
+  });
+
+  app.delete("/api/order/delete/:orderId", (req, res) => {
     controllers.orderController
       .destroy(req.params.orderId)
       .then(() => {
@@ -60,7 +67,7 @@ export default function route(app: express.Express) {
       });
   });
 
-  app.put("/api/order/:orderId", (req, res) => {
+  app.put("/api/order/update/:orderId", (req, res) => {
     controllers.orderController
       .update(req.params.orderId, req.body)
       .then(updatedOrder => {
