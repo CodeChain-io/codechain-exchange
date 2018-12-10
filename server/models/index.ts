@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as Sequelize from "sequelize";
+import { DealAttriubutes, DealInstance } from "./deal";
 import { OrderAttriubutes, OrderInstance } from "./order";
 
 const basename = path.basename(__filename);
@@ -41,6 +42,7 @@ db.Sequelize = Sequelize;
 
 interface Model {
   Order: Sequelize.Model<OrderInstance, OrderAttriubutes>;
+  Deal: Sequelize.Model<DealInstance, DealAttriubutes>;
 }
 
 export default db as Model;

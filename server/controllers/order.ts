@@ -59,7 +59,7 @@ export async function find(
   });
 }
 
-// Get orders in range
+// Get orders in given range
 export async function orderbook(
   range: number,
   marketPrice: number
