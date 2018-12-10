@@ -53,7 +53,6 @@ export async function find(
       delete (where as any)[o];
     }
   }
-  console.log(where);
   return db.Order.findAll({
     where
   });
