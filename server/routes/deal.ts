@@ -1,3 +1,4 @@
+import { AssetTransferTransaction } from "codechain-sdk/lib/core/classes";
 import * as express from "express";
 import { controllers } from "../controllers";
 
@@ -13,6 +14,17 @@ export default function dealRoute(app: express.Express) {
         req.body.takerAmount
       )
       .then(deals => res.status(201).send(deals))
+      .catch(err => res.status(400).send(err));
+  });
+
+  app.post("/api/deal/submit", (req, res) => {
+    controllers.dealController
+      .submit(
+        AssetTransferTransaction.fromJSON(req.body.order),
+        req.body.marketId,
+        req.body.makerAddress
+      )
+      .then(_ => res.status(201).send({ message: "success" }))
       .catch(err => res.status(400).send(err));
   });
 }

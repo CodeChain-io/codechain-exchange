@@ -17,7 +17,6 @@ export default function orderRoute(app: express.Express) {
         req.body.filled,
         req.body.rate,
         req.body.makerAddress,
-        req.body.signature,
         req.body.transaction,
         req.body.marketId
       )
@@ -34,7 +33,6 @@ export default function orderRoute(app: express.Express) {
         req.body.filled,
         req.body.rate,
         req.body.makerAddress,
-        req.body.signature,
         req.body.transaction,
         req.body.marketId
       )
@@ -42,30 +40,9 @@ export default function orderRoute(app: express.Express) {
       .catch(err => res.status(400).send(err));
   });
 
-  app.get("/api/deal/find", (req, res) => {
-    controllers.dealController
-      .find(
-        req.body.maker,
-        req.body.taker,
-        req.body.makerAsset,
-        req.body.takerAsset,
-        req.body.makerAmount,
-        req.body.takerAmount
-      )
-      .then(deals => res.status(201).send(deals))
-      .catch(err => res.status(400).send(err));
-  });
-
   app.get("/api/orderbook", (req, res) => {
     controllers.orderController
       .orderbook(req.body.range, req.body.marketPrice)
-      .then(orders => res.status(201).send(orders))
-      .catch(err => res.status(400).send(err));
-  });
-
-  app.get("/api/order/find/:makerAddress", (req, res) => {
-    controllers.orderController
-      .find(null, null, null, null, null, req.params.makerAddress)
       .then(orders => res.status(201).send(orders))
       .catch(err => res.status(400).send(err));
   });
