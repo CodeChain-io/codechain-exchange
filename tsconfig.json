@@ -9,7 +9,8 @@
     "outDir": "./build",
     "allowJs": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "resolveJsonModule": true
   },
   "include": ["./server/**/*", "./bin/*", "**/*.spec.ts"],
   "exclude": ["node_modules"]

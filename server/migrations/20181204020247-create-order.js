@@ -32,13 +32,9 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      signature: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
       transaction: {
         allowNull: false,
-        type: Sequelize.TEXT
+        type: Sequelize.JSON
       },
       marketId: {
         allowNull: false,
