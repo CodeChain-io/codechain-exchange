@@ -25,6 +25,6 @@ export default function dealRoute(app: express.Express) {
         req.body.makerAddress
       )
       .then(_ => res.status(201).send({ message: "success" }))
-      .catch(err => res.status(400).send(err));
+      .catch(err => res.status(400).send(err.message));
   });
 }

@@ -41,10 +41,14 @@ export default function orderRoute(app: express.Express) {
   });
 
   app.get("/api/orderbook", (req, res) => {
+    if (req.body.range === undefined || req.body.marketPrice === undefined) {
+      res.status(400).send("range | marketPrice is undefined");
+      return;
+    }
     controllers.orderController
       .orderbook(req.body.range, req.body.marketPrice)
       .then(orders => res.status(201).send(orders))
-      .catch(err => res.status(400).send(err));
+      .catch(err => res.status(400).send(err.message));
   });
 
   app.delete("/api/order/delete/:orderId", (req, res) => {

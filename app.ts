@@ -28,7 +28,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 route(app);
 app.get("*", (_req, res) =>
   res.status(200).send({
-    message: "Welcome to the beginning of nothingness."
+    message: "snothingness."
   })
 );
 

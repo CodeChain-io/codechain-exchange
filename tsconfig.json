@@ -10,7 +10,8 @@
     "allowJs": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "downlevelIteration": true
   },
   "include": ["./server/**/*", "./bin/*", "**/*.spec.ts"],
   "exclude": ["node_modules"]

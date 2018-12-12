@@ -8,8 +8,8 @@
       "maker-fee-asset-type": "testMakerFeeAsset",
       "taker-fee-asset-type": "testTakerFeeAsset",
       "digit": 2,
-      "asset1": "testAsset1",
-      "asset2": "testAsset2"
+      "asset1": "deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+      "asset2": "cafebabecafebabecafebabecafebabecafebabecafebabecafebabecafebabe"
     },
     "b2c": {
       "id": 1,
@@ -18,8 +18,8 @@
       "maker-fee-asset-type": "testMakerFeeAsset",
       "taker-fee-asset-type": "testTakerFeeAsset",
       "digit": 2,
-      "asset1": "testAsset1",
-      "asset2": "testAsset2"
+      "asset1": "deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+      "asset2": "cafebabecafebabecafebabecafebabecafebabecafebabecafebabecafebabe"
     }
   }
 }
