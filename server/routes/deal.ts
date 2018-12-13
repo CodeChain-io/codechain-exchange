@@ -24,7 +24,9 @@ export default function dealRoute(app: express.Express) {
         req.body.marketId,
         req.body.makerAddress
       )
-      .then(_ => res.status(201).send({ message: "success" }))
+      .then(_ => {
+        res.status(201).send({ message: "success" });
+      })
       .catch(err => res.status(400).send(err.message));
   });
 }

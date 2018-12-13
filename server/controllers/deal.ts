@@ -92,7 +92,7 @@ export async function submit(
   }
 
   // In case that there are matched orders
-  matchOrder(orders);
+  matchOrder(transaction, orders);
 }
 
 function checkTX(transaction: AssetTransferTransaction): boolean {
@@ -106,11 +106,16 @@ function checkTX(transaction: AssetTransferTransaction): boolean {
   for (const input of inputs) {
     utxo.push(input.prevOut);
   }
-  // Check if the UTXO list got from above is the same with one in order
+  // Check if the only one order is included
+  if (transaction.orders.length !== 1) {
+    return false;
+  }
   const order: OrderOnTransfer = transaction.orders[0];
   if (order === undefined || order === null) {
     return false;
   }
+
+  // Check if the UTXO list got from above is the same with one in order
   const origins = order.order.originOutputs;
   if (origins.length === utxo.length) {
     for (const [i, orderValue] of origins.entries()) {
@@ -186,7 +191,25 @@ function getRate(
   return rate;
 }
 
-function matchOrder(orders: OrderInstance[]): boolean {
-  console.log(orders);
+function matchOrder(
+  transaction: AssetTransferTransaction,
+  orders: OrderInstance[]
+): boolean {
+  const order: OrderOnTransfer = transaction.orders[0];
+  while (true) {
+    const firstUtxo = orders.pop().get();
+    // In case that matched order is fully filled
+    if (firstUtxo.amount === order.order.assetAmountTo.value.toNumber()) {
+      return true;
+    }
+    // In case that matched order is partially filled
+    else if (firstUtxo.amount > order.order.assetAmountTo.value.toNumber()) {
+      return true;
+    }
+    // In case that matched order is fully filled and there is a remain amount in a incoming order
+    else {
+      return true;
+    }
+  }
   return true;
 }

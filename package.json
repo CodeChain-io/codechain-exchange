@@ -15,10 +15,13 @@
   "dependencies": {
     "@types/body-parser": "^1.17.0",
     "@types/express": "^4.16.0",
+    "@types/mocha": "^5.2.5",
     "@types/morgan": "^1.7.35",
     "@types/sequelize": "^4.27.32",
+    "codechain-primitives": "^0.4.3",
     "codechain-sdk": "https://github.com/CodeChain-io/codechain-sdk-js.git#c8f395dca20665f2619f96b17f7af4559fac74ed",
     "express": "^4.16.4",
+    "mocha": "^5.2.0",
     "morgan": "^1.9.1",
     "pg": "^7.7.1",
     "pg-hstore": "^2.3.2",

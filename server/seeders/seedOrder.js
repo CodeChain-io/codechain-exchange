@@ -15,7 +15,7 @@ module.exports = {
         rate: Math.round((i + 1) / 5),
         makerAddress: "testMaker",
         signature: "testSignaure",
-        transaction: "testTransaction",
+        transaction: { transaction: "testTransaction" },
         marketId: 0,
         createdAt: (2018 + i).toString() + "-12-05T03:27:36.388Z",
         updatedAt: (2018 + i).toString() + "-12-05T03:27:36.388Z"
@@ -30,13 +30,18 @@ module.exports = {
         rate: Math.round((i + 1) / 5),
         makerAddress: "testMaker",
         signature: "testSignaure",
-        transaction: "testTransaction",
+        transaction: { transaction: "testTransaction" },
         marketId: 0,
         createdAt: (2018 + i).toString() + "-12-05T03:27:36.388Z",
         updatedAt: (2018 + i).toString() + "-12-05T03:27:36.388Z"
       });
     }
-    return queryInterface.bulkInsert("Orders", orders1.concat(orders2), {});
+    return queryInterface.bulkInsert(
+      "Orders",
+      orders1.concat(orders2),
+      {},
+      { transaction: { type: new Sequelize.JSON() } }
+    );
   },
 
   down: (queryInterface, Sequelize) => {
