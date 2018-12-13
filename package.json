@@ -5,19 +5,21 @@
   "scripts": {
     "start": "ts-node ./bin/www",
     "start-dev": "nodemon",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "migration": "sequelize db:migrate",
     "undo-migration": "sequelize db:migrate:undo",
     "seed": "sequelize db:seed:all",
     "undo-seed": "sequelize db:seed:undo:all",
-    "fmt": "tslint -p . --fix && prettier 'server/**/*.{ts,json}' --write"
+    "fmt": "tslint -p . --fix && prettier 'server/**/*.{ts,json}' --write",
+    "test": "mocha --reporter spec --compilers ts:ts-node/register server/**/*.test.ts"
   },
   "dependencies": {
     "@types/body-parser": "^1.17.0",
+    "@types/chai": "^4.1.7",
     "@types/express": "^4.16.0",
     "@types/mocha": "^5.2.5",
     "@types/morgan": "^1.7.35",
     "@types/sequelize": "^4.27.32",
+    "chai": "^4.2.0",
     "codechain-primitives": "^0.4.3",
     "codechain-sdk": "https://github.com/CodeChain-io/codechain-sdk-js.git#c8f395dca20665f2619f96b17f7af4559fac74ed",
     "express": "^4.16.4",
