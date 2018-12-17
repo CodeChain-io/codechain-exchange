@@ -1,8 +1,14 @@
 {
-  "dex-address": "testDexAddress",
+  "dex-asset-address": "tcaqyqsdk4knmjdr5upjf6enlx0dgr6f4st4vcq6rgl33",
+  "dex-platform-address": "tccq9pjvm7cx6xmzkurvj7qdkycwrelqv8a2vdl4ara",
   "market": {
-    "b2e": {
+    "testMarket": {
       "id": 0,
+      "asset1": "deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+      "asset2": "cafebabecafebabecafebabecafebabecafebabecafebabecafebabecafebabe"
+    },
+    "b2e": {
+      "id": 1,
       "maker-fee": 1,
       "taker-fee": 1,
       "maker-fee-asset-type": "testMakerFeeAsset",
@@ -12,7 +18,7 @@
       "asset2": "cafebabecafebabecafebabecafebabecafebabecafebabecafebabecafebabe"
     },
     "b2c": {
-      "id": 1,
+      "id": 2,
       "maker-fee": 1,
       "taker-fee": 1,
       "maker-fee-asset-type": "testMakerFeeAsset",
@@ -20,6 +26,20 @@
       "digit": 2,
       "asset1": "deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
       "asset2": "cafebabecafebabecafebabecafebabecafebabecafebabecafebabecafebabe"
+    }
+  },
+  "server": {
+    "ndexer": {
+      "cc": "https://husky.codechain.io/explorer",
+      "tc": "https://husky.codechain.io/explorer",
+      "sc": "https://saluki.codechain.io/explorer",
+      "wc": "https://corgi.codechain.io/explorer"
+    },
+    "chain": {
+      "cc": "https://husky.codechain.io/explorer",
+      "tc": "http://52.79.108.1:8080",
+      "sc": "http://52.78.210.78:8080",
+      "wc": "http://52.78.215.10:8080"
     }
   }
 }

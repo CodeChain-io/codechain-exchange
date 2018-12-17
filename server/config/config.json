@@ -2,7 +2,7 @@
   "development": {
     "username": "gnu",
     "password": "1234",
-    "database": "todos-dev",
+    "database": "testdb",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
