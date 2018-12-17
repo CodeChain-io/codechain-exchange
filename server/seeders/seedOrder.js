@@ -16,7 +16,7 @@ module.exports = {
         makerAddress: "testMaker",
         signature: "testSignaure",
         transaction: { transaction: "testTransaction" },
-        marketId: 0,
+        marketId: 1,
         createdAt: (2018 + i).toString() + "-12-05T03:27:36.388Z",
         updatedAt: (2018 + i).toString() + "-12-05T03:27:36.388Z"
       });
@@ -31,7 +31,7 @@ module.exports = {
         makerAddress: "testMaker",
         signature: "testSignaure",
         transaction: { transaction: "testTransaction" },
-        marketId: 0,
+        marketId: 1,
         createdAt: (2018 + i).toString() + "-12-05T03:27:36.388Z",
         updatedAt: (2018 + i).toString() + "-12-05T03:27:36.388Z"
       });
