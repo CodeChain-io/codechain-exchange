@@ -1,13 +1,10 @@
 import { H256 } from "codechain-primitives/lib";
 import { SDK } from "codechain-sdk";
-import { controllers } from "../controllers";
-// import * as Config from "../config/dex.json";
-import { OrderWatcher } from "./orderWatcher";
-// import db from "../models";
-// import * as chai from "chai";
+import { controllers } from "../../controllers";
+import { OrderWatcher } from "../orderWatcher";
+import db from "../../models";
 
-// const expect = chai.expect;
-
+// To execute test, change orderWatcher's target node to localhost
 const sdk = new SDK({
   server: process.env.CODECHAIN_RPC_HTTP || "http://127.0.0.1:8080",
   networkId: process.env.CODECHAIN_NETWORK_ID || "tc"
@@ -23,8 +20,6 @@ const ACCOUNT_PASSPHRASE = process.env.ACCOUNT_PASSPHRASE || "satoshi";
 (async () => {
   const aliceAddress = await sdk.key.createAssetTransferAddress();
 
-  // Create asset named Gold. Total amount of Gold is 10000. The approver is set
-  // to null, which means this type of asset can be transferred freely.
   const goldAssetScheme = sdk.core.createAssetScheme({
     shardId: 0,
     metadata: JSON.stringify({
@@ -103,7 +98,7 @@ const ACCOUNT_PASSPHRASE = process.env.ACCOUNT_PASSPHRASE || "satoshi";
     0,
     aliceAddress.toString()
   );
-  console.log(id);
+
   orderWatcher.addOrderForValidity([id as number, [[mintTx.hash(), 0]]]);
 
   await sleep(10000);
@@ -139,12 +134,27 @@ const ACCOUNT_PASSPHRASE = process.env.ACCOUNT_PASSPHRASE || "satoshi";
     );
   }
 
-  const list1 = await controllers.orderController.find(
+  await sleep(10000);
+  const list = await controllers.orderController.find(
     "0xcafebabecafebabecafebabecafebabecafebabecafebabecafebabecafebabe",
-    "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+    "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+    100,
+    0
   );
-  console.log(list1);
+  if (list.length !== 0) {
+    throw Error("Invalid order is not removed properly");
+  }
+
+  db.Order.destroy({
+    where: { marketId: 0 },
+    truncate: true
+  });
+  orderWatcher.stop();
 })().catch(err => {
+  db.Order.destroy({
+    where: { marketId: 0 },
+    truncate: true
+  });
   console.error(`Error:`, err);
 });
 
