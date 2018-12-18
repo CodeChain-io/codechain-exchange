@@ -2,9 +2,8 @@ import { U64 } from "codechain-primitives/lib";
 import {
   AssetOutPoint,
   AssetTransferInput,
-  AssetTransferTransaction,
   H256,
-  OrderOnTransfer
+  Order
 } from "codechain-sdk/lib/core/classes";
 import { Op } from "sequelize";
 import * as Config from "../config/dex.json";
@@ -20,7 +19,8 @@ export async function create(
   filled: number,
   rate: number,
   makerAddress: string,
-  transaction: JSON,
+  assetList: JSON,
+  order: JSON,
   marketId: number
 ): Promise<OrderInstance> {
   return db.Order.create({
@@ -30,7 +30,8 @@ export async function create(
     filled,
     rate,
     makerAddress,
-    transaction,
+    assetList,
+    order,
     marketId
   });
 }
@@ -42,7 +43,8 @@ export async function find(
   filled?: number,
   rate?: number,
   makerAddress?: string,
-  transaction?: JSON,
+  assetList?: JSON,
+  order?: JSON,
   marketId?: number
 ): Promise<OrderInstance[]> {
   const where = {
@@ -52,7 +54,8 @@ export async function find(
     filled,
     rate,
     makerAddress,
-    transaction,
+    assetList,
+    order,
     marketId
   };
   for (const o in where) {
@@ -128,7 +131,7 @@ export async function update(id: number, body: any): Promise<OrderInstance> {
 }
 
 // FIXME - use codechain RPC
-function executeScript(_tx: AssetTransferTransaction): boolean {
+function executeScript(_inputs: AssetTransferInput[]): boolean {
   console.log("Not implemented");
   return true;
 }
@@ -138,18 +141,19 @@ interface IndexSig {
 }
 
 export async function submit(
-  transaction: AssetTransferTransaction,
+  assetList: AssetTransferInput[],
+  order: Order,
   marketId: number,
   makerAddress: string
 ): Promise<void | number> {
-  if (!checkTX(transaction)) {
+  if (!checkTX(assetList)) {
     throw Error("Invalid transaction - 0");
   }
-  const order: OrderOnTransfer = transaction.orders[0];
-  const assetTypeFrom: H256 = order.order.assetTypeFrom;
-  const assetTypeTo: H256 = order.order.assetTypeTo;
-  const assetAmountFrom: U64 = order.order.assetAmountFrom;
-  const rate = getRate(transaction, marketId);
+
+  const assetTypeFrom: H256 = order.assetTypeFrom;
+  const assetTypeTo: H256 = order.assetTypeTo;
+  const assetAmountFrom: U64 = order.assetAmountFrom;
+  const rate = getRate(order, marketId);
 
   if (rate === null) {
     throw Error("Invalid transaction - 1");
@@ -163,76 +167,39 @@ export async function submit(
     rate,
     null,
     null,
+    null,
     marketId
   );
 
   // In case that there is no any matched orders
   if (orders.length === 0) {
     const ins = await OrderController.create(
-      assetTypeFrom.toEncodeObject(),
-      assetTypeTo.toEncodeObject(),
+      assetTypeFrom.toEncodeObject().slice(2),
+      assetTypeTo.toEncodeObject().slice(2),
       assetAmountFrom.value.toNumber(),
       0,
       rate,
       makerAddress,
-      JSON.parse(JSON.stringify(transaction.toJSON())),
+      JSON.parse(JSON.stringify(assetList.map(input => input.toJSON()))),
+      JSON.parse(JSON.stringify(order.toJSON())),
       marketId
     );
     return ins.get("id");
   }
   return;
   // In case that there are matched orders
-  matchOrder(transaction, orders);
+  matchOrder(assetList, order, orders);
 }
 
-function checkTX(transaction: AssetTransferTransaction): boolean {
+function checkTX(inputs: AssetTransferInput[]): boolean {
   // Check if unlock scripts in input is valid
-  if (!executeScript(transaction)) {
+  if (!executeScript(inputs)) {
     throw { message: "tx is not valid" };
   }
   // Get UTXO list
-  const inputs: AssetTransferInput[] = transaction.inputs;
   const utxo: AssetOutPoint[] = [];
   for (const input of inputs) {
     utxo.push(input.prevOut);
-  }
-  // Check if the only one order is included
-  if (transaction.orders.length !== 1) {
-    return false;
-  }
-  const order: OrderOnTransfer = transaction.orders[0];
-  if (order === undefined || order === null) {
-    return false;
-  }
-
-  // Check if the UTXO list got from above is the same with one in order
-  const origins = order.order.originOutputs;
-  if (origins.length === utxo.length) {
-    for (const [i, orderValue] of origins.entries()) {
-      const targetOrder = utxo[i];
-      if (!targetOrder.transactionHash.isEqualTo(orderValue.transactionHash)) {
-        return false;
-      } else if (targetOrder.index !== orderValue.index) {
-        return false;
-      } else if (!targetOrder.assetType.isEqualTo(orderValue.assetType)) {
-        return false;
-      } else if (!targetOrder.amount.isEqualTo(orderValue.amount)) {
-        return false;
-      } else if (
-        !(
-          targetOrder.lockScriptHash === undefined &&
-          orderValue.lockScriptHash === undefined
-        )
-      ) {
-        if (!targetOrder.lockScriptHash.isEqualTo(orderValue.lockScriptHash)) {
-          return false;
-        }
-      } else if (targetOrder.parameters !== orderValue.parameters) {
-        return false;
-      }
-    }
-  } else {
-    return false;
   }
 
   // FIXME - check pubkey hash is standard script
@@ -241,15 +208,11 @@ function checkTX(transaction: AssetTransferTransaction): boolean {
   return true;
 }
 
-function getRate(
-  transaction: AssetTransferTransaction,
-  marketId: number
-): number | null {
-  const order: OrderOnTransfer = transaction.orders[0];
-  const assetTypeFrom: H256 = order.order.assetTypeFrom;
-  const assetTypeTo: H256 = order.order.assetTypeTo;
-  const assetAmountFrom: U64 = order.order.assetAmountFrom;
-  const assetAmountTo: U64 = order.order.assetAmountTo;
+function getRate(order: Order, marketId: number): number | null {
+  const assetTypeFrom: H256 = order.assetTypeFrom;
+  const assetTypeTo: H256 = order.assetTypeTo;
+  const assetAmountFrom: U64 = order.assetAmountFrom;
+  const assetAmountTo: U64 = order.assetAmountTo;
 
   // Check if the market ID is valid
   let marketConfig: { id: number; asset1: string; asset2: string };
@@ -282,18 +245,19 @@ function getRate(
 }
 
 function matchOrder(
-  transaction: AssetTransferTransaction,
+  inputs: AssetTransferInput[],
+  order: Order,
   orders: OrderInstance[]
 ): boolean {
-  const order: OrderOnTransfer = transaction.orders[0];
   while (true) {
     const matchedOrder = orders.pop().get();
+
     // In case that matched order is fully filled
-    if (matchedOrder.amount === order.order.assetAmountTo.value.toNumber()) {
+    if (matchedOrder.amount === order.assetAmountTo.value.toNumber()) {
       return true;
     }
     // In case that matched order is partially filled
-    else if (matchedOrder.amount > order.order.assetAmountTo.value.toNumber()) {
+    else if (matchedOrder.amount > order.assetAmountTo.value.toNumber()) {
       return true;
     }
     // In case that matched order is fully filled and there is a remain amount in a incoming order

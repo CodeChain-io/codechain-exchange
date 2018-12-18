@@ -32,7 +32,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      transaction: {
+      assetList: {
+        allowNull: false,
+        type: Sequelize.JSON
+      },
+      order: {
         allowNull: false,
         type: Sequelize.JSON
       },
