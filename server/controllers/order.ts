@@ -287,13 +287,13 @@ function matchOrder(
 ): boolean {
   const order: OrderOnTransfer = transaction.orders[0];
   while (true) {
-    const firstUtxo = orders.pop().get();
+    const matchedOrder = orders.pop().get();
     // In case that matched order is fully filled
-    if (firstUtxo.amount === order.order.assetAmountTo.value.toNumber()) {
+    if (matchedOrder.amount === order.order.assetAmountTo.value.toNumber()) {
       return true;
     }
     // In case that matched order is partially filled
-    else if (firstUtxo.amount > order.order.assetAmountTo.value.toNumber()) {
+    else if (matchedOrder.amount > order.order.assetAmountTo.value.toNumber()) {
       return true;
     }
     // In case that matched order is fully filled and there is a remain amount in a incoming order

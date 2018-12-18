@@ -1,5 +1,6 @@
 import * as express from "express";
 import { controllers } from "../controllers";
+import { AssetTransferTransaction } from "codechain-sdk/lib/core/classes";
 
 export default function orderRoute(app: express.Express) {
   app.get("/api", (_req, res) =>
@@ -69,5 +70,18 @@ export default function orderRoute(app: express.Express) {
         res.status(200).send(updatedOrder);
       })
       .catch(err => res.status(400).send(err));
+  });
+
+  app.post("/api/order/submit", (req, res) => {
+    controllers.orderController
+      .submit(
+        AssetTransferTransaction.fromJSON(req.body.order),
+        req.body.marketId,
+        req.body.makerAddress
+      )
+      .then(_ => {
+        res.status(201).send({ message: "success" });
+      })
+      .catch(err => res.status(400).send(err.message));
   });
 }
