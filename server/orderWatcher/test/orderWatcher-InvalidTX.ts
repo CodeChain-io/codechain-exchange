@@ -1,8 +1,8 @@
 import { H256 } from "codechain-primitives/lib";
 import { SDK } from "codechain-sdk";
 import { controllers } from "../../controllers";
-import { OrderWatcher } from "../orderWatcher";
 import db from "../../models";
+import { OrderWatcher } from "../orderWatcher";
 
 // To execute test, change orderWatcher's target node to localhost
 const sdk = new SDK({

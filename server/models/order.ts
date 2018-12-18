@@ -8,7 +8,8 @@ export interface OrderAttriubutes {
   filled: number;
   rate: number;
   makerAddress: string;
-  transaction: JSON;
+  assetList: JSON;
+  order: JSON;
   marketId: number;
   createdAt?: string;
   updatedAt?: string;
@@ -29,7 +30,8 @@ export default (
       filled: DataTypes.BIGINT,
       rate: DataTypes.DOUBLE,
       makerAddress: DataTypes.STRING,
-      transaction: DataTypes.JSON,
+      assetList: DataTypes.JSON,
+      order: DataTypes.JSON,
       marketId: DataTypes.INTEGER
     },
     {}
