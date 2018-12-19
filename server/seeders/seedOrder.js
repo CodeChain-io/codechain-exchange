@@ -11,10 +11,10 @@ module.exports = {
         takerAsset:
           "cafebabecafebabecafebabecafebabecafebabecafebabecafebabecafebabe",
         amount: 10,
-        filled: 0,
         rate: Math.round((i + 1) / 5),
         makerAddress: "testMaker",
-        transaction: { transaction: "testTransaction" },
+        assetList: { input: 10 },
+        order: { order: "testOrder" },
         marketId: 1,
         createdAt: (2018 + i).toString() + "-12-05T03:27:36.388Z",
         updatedAt: (2018 + i).toString() + "-12-05T03:27:36.388Z"
@@ -25,10 +25,10 @@ module.exports = {
         takerAsset:
           "deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
         amount: 10,
-        filled: 0,
         rate: Math.round((i + 1) / 5),
         makerAddress: "testMaker",
-        transaction: { transaction: "testTransaction" },
+        assetList: { input: "testTransaction" },
+        order: { order: "testOrder" },
         marketId: 1,
         createdAt: (2018 + i).toString() + "-12-05T03:27:36.388Z",
         updatedAt: (2018 + i).toString() + "-12-05T03:27:36.388Z"
@@ -38,7 +38,10 @@ module.exports = {
       "Orders",
       orders1.concat(orders2),
       {},
-      { transaction: { type: new Sequelize.JSON() } }
+      {
+        assetList: { type: new Sequelize.JSON() },
+        order: { type: new Sequelize.JSON() }
+      }
     );
   },
 

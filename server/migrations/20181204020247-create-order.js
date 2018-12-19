@@ -20,10 +20,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.BIGINT
       },
-      filled: {
-        allowNull: false,
-        type: Sequelize.BIGINT
-      },
       rate: {
         allowNull: false,
         type: Sequelize.DOUBLE

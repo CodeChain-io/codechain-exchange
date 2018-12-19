@@ -1,22 +1,22 @@
 import { U64 } from "codechain-primitives/lib";
+import { SDK } from "codechain-sdk";
 import {
   AssetOutPoint,
   AssetTransferInput,
   H256,
   Order
 } from "codechain-sdk/lib/core/classes";
+import { AssetTransferInputJSON } from "codechain-sdk/lib/core/transaction/AssetTransferInput";
 import { Op } from "sequelize";
 import * as Config from "../config/dex.json";
 import db from "../models";
 // import { DealInstance } from "../models/deal";
-import { OrderInstance } from "../models/order";
-import * as OrderController from "./order";
+import { OrderAttriubutes, OrderInstance } from "../models/order";
 
 export async function create(
   makerAsset: string,
   takerAsset: string,
   amount: number,
-  filled: number,
   rate: number,
   makerAddress: string,
   assetList: JSON,
@@ -27,7 +27,6 @@ export async function create(
     makerAsset,
     takerAsset,
     amount,
-    filled,
     rate,
     makerAddress,
     assetList,
@@ -40,7 +39,6 @@ export async function find(
   makerAsset?: string,
   takerAsset?: string,
   amount?: number,
-  filled?: number,
   rate?: number,
   makerAddress?: string,
   assetList?: JSON,
@@ -51,7 +49,6 @@ export async function find(
     makerAsset,
     takerAsset,
     amount,
-    filled,
     rate,
     makerAddress,
     assetList,
@@ -159,10 +156,9 @@ export async function submit(
     throw Error("Invalid transaction - 1");
   }
 
-  const orders = await OrderController.find(
+  const orders = await find(
     assetTypeTo.toEncodeObject().slice(2),
     assetTypeFrom.toEncodeObject().slice(2),
-    null,
     null,
     rate,
     null,
@@ -173,22 +169,21 @@ export async function submit(
 
   // In case that there is no any matched orders
   if (orders.length === 0) {
-    const ins = await OrderController.create(
+    const ins = await create(
       assetTypeFrom.toEncodeObject().slice(2),
       assetTypeTo.toEncodeObject().slice(2),
       assetAmountFrom.value.toNumber(),
-      0,
       rate,
       makerAddress,
       JSON.parse(JSON.stringify(assetList.map(input => input.toJSON()))),
       JSON.parse(JSON.stringify(order.toJSON())),
       marketId
     );
-    return ins.get("id");
+    return parseInt(ins.get().id, 10);
   }
   return;
   // In case that there are matched orders
-  matchOrder(assetList, order, orders);
+  matchOrder(assetList, order, orders, makerAddress);
 }
 
 function checkTX(inputs: AssetTransferInput[]): boolean {
@@ -202,6 +197,10 @@ function checkTX(inputs: AssetTransferInput[]): boolean {
     utxo.push(input.prevOut);
   }
 
+  // FIXME - check if UTXOs are the same asset type
+  // FIXME - check if UTXOs really exist
+  // FIXME - check If UTXOs is the same with orgin output of the order
+  // FIXME - check if UTXOs have enought amount to pay order
   // FIXME - check pubkey hash is standard script
   // FIXME - register UTXO and expiration date to order watcher
   // FIXME - check if a fee is properly paid
@@ -244,20 +243,80 @@ function getRate(order: Order, marketId: number): number | null {
   return rate;
 }
 
-function matchOrder(
+async function matchOrder(
   inputs: AssetTransferInput[],
   order: Order,
-  orders: OrderInstance[]
-): boolean {
+  orders: OrderInstance[],
+  makerAddress: string
+): Promise<boolean> {
+  const sdk = new SDK({ server: Config.server.chain.cc });
+
   while (true) {
     const matchedOrder = orders.pop().get();
+    const remained = matchedOrder.amount;
+    const relayedInputs = (JSON.parse(
+      JSON.stringify(matchedOrder.assetList)
+    ) as AssetTransferInputJSON[]).map(input =>
+      AssetTransferInput.fromJSON(input)
+    );
+    const relayedOrder = Order.fromJSON(
+      JSON.parse(JSON.stringify(matchedOrder.order))
+    );
+
+    // Check a validity of orders
+    if (relayedOrder.assetAmountTo.value.toNumber() !== remained) {
+      throw Error("Order is broken");
+    }
+    if (
+      relayedOrder.assetTypeFrom.toEncodeObject().slice(2) !==
+        matchedOrder.makerAsset ||
+      relayedOrder.assetTypeTo.toEncodeObject().slice(2) !==
+        matchedOrder.takerAsset
+    ) {
+      throw Error("Order is broken");
+    }
+    const relayedAddress = matchedOrder.makerAddress;
+    let relayedAmount: number;
+    for (const input of relayedInputs) {
+      relayedAmount += input.prevOut.amount.value.toNumber();
+    }
+    if (relayedAmount !== relayedOrder.assetAmountFrom.value.toNumber()) {
+      throw Error("Order is broken");
+    }
+    let incomingAmount: number;
+    for (const input of inputs) {
+      incomingAmount += input.prevOut.amount.value.toNumber();
+    }
+    if (incomingAmount !== order.assetAmountFrom.value.toNumber()) {
+      throw Error("Order is broken");
+    }
 
     // In case that matched order is fully filled
-    if (matchedOrder.amount === order.assetAmountTo.value.toNumber()) {
+    if (remained === order.assetAmountTo.value.toNumber()) {
+      await matchSame(
+        sdk,
+        relayedInputs,
+        inputs,
+        relayedAddress,
+        relayedOrder,
+        makerAddress,
+        matchedOrder,
+        order
+      );
       return true;
     }
     // In case that matched order is partially filled
-    else if (matchedOrder.amount > order.assetAmountTo.value.toNumber()) {
+    else if (remained > order.assetAmountTo.value.toNumber()) {
+      await matchAbove(
+        sdk,
+        relayedInputs,
+        inputs,
+        relayedAddress,
+        relayedOrder,
+        makerAddress,
+        matchedOrder,
+        order
+      );
       return true;
     }
     // In case that matched order is fully filled and there is a remain amount in a incoming order
@@ -266,4 +325,161 @@ function matchOrder(
     }
   }
   return true;
+}
+
+async function matchSame(
+  sdk: SDK,
+  relayedInputs: AssetTransferInput[],
+  inputs: AssetTransferInput[],
+  relayedAddress: string,
+  relayedOrder: Order,
+  makerAddress: string,
+  matchedOrder: OrderAttriubutes,
+  order: Order
+): Promise<void> {
+  // Add asset newely gain
+  const transferTx = sdk.core
+    .createAssetTransferTransaction()
+    .addInputs(relayedInputs)
+    .addInputs(inputs)
+    .addOutputs(
+      {
+        recipient: relayedAddress,
+        amount: relayedOrder.assetAmountTo,
+        assetType: matchedOrder.takerAsset
+      },
+      {
+        recipient: makerAddress,
+        amount: relayedOrder.assetAmountFrom,
+        assetType: matchedOrder.makerAsset
+      }
+    );
+
+  // Add remain asset
+  let relayedAmount: number;
+  for (const input of relayedInputs) {
+    relayedAmount += input.prevOut.amount.value.toNumber();
+  }
+  const relayedRemainedAsset =
+    relayedAmount - relayedOrder.assetAmountFrom.value.toNumber();
+  if (relayedRemainedAsset > 0) {
+    transferTx.addOutputs({
+      recipient: relayedAddress,
+      amount: relayedRemainedAsset,
+      assetType: matchedOrder.makerAsset
+    });
+  }
+  let amount: number;
+  for (const input of inputs) {
+    amount += input.prevOut.amount.value.toNumber();
+  }
+  const remainedAsset = amount - relayedOrder.assetAmountTo.value.toNumber();
+  if (remainedAsset > 0) {
+    transferTx.addOutputs({
+      recipient: makerAddress,
+      amount: remainedAsset,
+      assetType: matchedOrder.takerAsset
+    });
+  }
+
+  // Add order
+  transferTx
+    .addOrder({
+      order: relayedOrder,
+      spentAmount: relayedOrder.assetAmountFrom,
+      inputIndices: Array.from(Array(relayedInputs.length).keys()),
+      outputIndices: []
+    })
+    .addOrder({
+      order,
+      spentAmount: relayedOrder.assetAmountTo,
+      inputIndices: Array.from(
+        Array(relayedInputs.length + inputs.length).keys()
+      ).slice(relayedInputs.length),
+      outputIndices: []
+    });
+  // FIXME - Add fee payment Output
+
+  await destroy(parseInt(matchedOrder.id, 10));
+}
+
+async function matchAbove(
+  sdk: SDK,
+  relayedInputs: AssetTransferInput[],
+  inputs: AssetTransferInput[],
+  relayedAddress: string,
+  relayedOrder: Order,
+  makerAddress: string,
+  matchedOrder: OrderAttriubutes,
+  order: Order
+): Promise<void> {
+  // Add asset newely gain
+  const transferTx = sdk.core
+    .createAssetTransferTransaction()
+    .addInputs(relayedInputs)
+    .addInputs(inputs)
+    .addOutputs(
+      {
+        recipient: relayedAddress,
+        amount: order.assetAmountFrom,
+        assetType: matchedOrder.takerAsset
+      },
+      {
+        recipient: makerAddress,
+        amount: order.assetAmountTo,
+        assetType: matchedOrder.makerAsset
+      }
+    );
+
+  // Add remain asset
+  let relayedAmount: number;
+  for (const input of relayedInputs) {
+    relayedAmount += input.prevOut.amount.value.toNumber();
+  }
+  const relayedRemainedAsset =
+    relayedAmount - order.assetAmountTo.value.toNumber();
+  if (relayedRemainedAsset > 0) {
+    transferTx.addOutputs({
+      recipient: relayedAddress,
+      amount: relayedRemainedAsset,
+      assetType: matchedOrder.makerAsset
+    });
+  }
+  let amount: number;
+  for (const input of inputs) {
+    amount += input.prevOut.amount.value.toNumber();
+  }
+  const remainedAsset = amount - order.assetAmountFrom.value.toNumber();
+  if (remainedAsset > 0) {
+    transferTx.addOutputs({
+      recipient: makerAddress,
+      amount: remainedAsset,
+      assetType: matchedOrder.takerAsset
+    });
+  }
+
+  // Add order
+  transferTx
+    .addOrder({
+      order: relayedOrder,
+      spentAmount: order.assetAmountTo,
+      inputIndices: Array.from(Array(relayedInputs.length).keys()),
+      outputIndices: [2]
+    })
+    .addOrder({
+      order,
+      spentAmount: order.assetAmountFrom,
+      inputIndices: Array.from(
+        Array(relayedInputs.length + inputs.length).keys()
+      ).slice(relayedInputs.length),
+      outputIndices: []
+    });
+
+  const updatedOrder = Order.fromJSON(
+    JSON.parse(JSON.stringify(matchedOrder.order))
+  ).consume(order.assetAmountTo);
+  update(parseInt(matchedOrder.id, 10), {
+    amount: updatedOrder.assetAmountFrom,
+    order: updatedOrder
+  });
 }
