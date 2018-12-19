@@ -16,7 +16,6 @@ export default function orderRoute(app: express.Express) {
         req.body.makerAsset,
         req.body.takerAsset,
         req.body.amount,
-        req.body.filled,
         req.body.rate,
         req.body.makerAddress,
         null,

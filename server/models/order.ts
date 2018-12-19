@@ -5,7 +5,6 @@ export interface OrderAttriubutes {
   makerAsset: string;
   takerAsset: string;
   amount: number;
-  filled: number;
   rate: number;
   makerAddress: string;
   assetList: JSON;
@@ -27,7 +26,6 @@ export default (
       makerAsset: DataTypes.STRING,
       takerAsset: DataTypes.STRING,
       amount: DataTypes.BIGINT,
-      filled: DataTypes.BIGINT,
       rate: DataTypes.DOUBLE,
       makerAddress: DataTypes.STRING,
       assetList: DataTypes.JSON,
