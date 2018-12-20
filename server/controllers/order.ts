@@ -244,12 +244,14 @@ function getRate(order: Order, marketId: number): number | null {
 }
 
 async function matchOrder(
-  inputs: AssetTransferInput[],
-  order: Order,
+  incomingInputs: AssetTransferInput[],
+  incomingOrder: Order,
   orders: OrderInstance[],
   makerAddress: string
 ): Promise<boolean> {
   const sdk = new SDK({ server: Config.server.chain.cc });
+  let inputs: AssetTransferInput[] = incomingInputs;
+  let order: Order = incomingOrder;
 
   while (true) {
     const matchedOrder = orders.pop().get();
@@ -321,10 +323,20 @@ async function matchOrder(
     }
     // In case that matched order is fully filled and there is a remain amount in a incoming order
     else {
-      return true;
+      const updated = await matchBelow(
+        sdk,
+        relayedInputs,
+        inputs,
+        relayedAddress,
+        relayedOrder,
+        makerAddress,
+        matchedOrder,
+        order
+      );
+      inputs = [updated.inputs];
+      order = updated.order;
     }
   }
-  return true;
 }
 
 async function matchSame(
@@ -399,6 +411,7 @@ async function matchSame(
       outputIndices: []
     });
   // FIXME - Add fee payment Output
+  // FIXME - Send transaction signed with a DEX address
 
   await destroy(parseInt(matchedOrder.id, 10));
 }
@@ -475,11 +488,102 @@ async function matchAbove(
       outputIndices: []
     });
 
+  // FIXME - Add fee payment Output
+  // FIXME - Send transaction signed with a DEX address
+
   const updatedOrder = Order.fromJSON(
     JSON.parse(JSON.stringify(matchedOrder.order))
   ).consume(order.assetAmountTo);
   update(parseInt(matchedOrder.id, 10), {
     amount: updatedOrder.assetAmountFrom,
+    assetList: [transferTx.getTransferredAsset(2).createTransferInput().toJSON],
     order: updatedOrder
   });
+}
+
+async function matchBelow(
+  sdk: SDK,
+  relayedInputs: AssetTransferInput[],
+  inputs: AssetTransferInput[],
+  relayedAddress: string,
+  relayedOrder: Order,
+  makerAddress: string,
+  matchedOrder: OrderAttriubutes,
+  order: Order
+): Promise<{ inputs: AssetTransferInput; order: Order }> {
+  // Add asset newely gain
+  const transferTx = sdk.core
+    .createAssetTransferTransaction()
+    .addInputs(relayedInputs)
+    .addInputs(inputs)
+    .addOutputs(
+      {
+        recipient: relayedAddress,
+        amount: relayedOrder.assetAmountTo,
+        assetType: matchedOrder.takerAsset
+      },
+      {
+        recipient: makerAddress,
+        amount: relayedOrder.assetAmountFrom,
+        assetType: matchedOrder.makerAsset
+      }
+    );
+
+  // Add remain asset
+  let relayedAmount: number;
+  for (const input of relayedInputs) {
+    relayedAmount += input.prevOut.amount.value.toNumber();
+  }
+  const relayedRemainedAsset =
+    relayedAmount - relayedOrder.assetAmountTo.value.toNumber();
+  if (relayedRemainedAsset > 0) {
+    transferTx.addOutputs({
+      recipient: relayedAddress,
+      amount: relayedRemainedAsset,
+      assetType: matchedOrder.makerAsset
+    });
+  }
+  let amount: number;
+  for (const input of inputs) {
+    amount += input.prevOut.amount.value.toNumber();
+  }
+  const remainedAsset = amount - relayedOrder.assetAmountFrom.value.toNumber();
+  if (remainedAsset > 0) {
+    transferTx.addOutputs({
+      recipient: makerAddress,
+      amount: remainedAsset,
+      assetType: matchedOrder.takerAsset
+    });
+  }
+
+  // Add order
+  transferTx
+    .addOrder({
+      order: relayedOrder,
+      spentAmount: order.assetAmountTo,
+      inputIndices: Array.from(Array(relayedInputs.length).keys()),
+      outputIndices: [3]
+    })
+    .addOrder({
+      order,
+      spentAmount: order.assetAmountFrom,
+      inputIndices: Array.from(
+        Array(relayedInputs.length + inputs.length).keys()
+      ).slice(relayedInputs.length),
+      outputIndices: []
+    });
+
+  // FIXME - Add fee payment Output
+  // FIXME - Send transaction signed with a DEX address
+
+  await destroy(parseInt(matchedOrder.id, 10));
+
+  const updatedOrder = Order.fromJSON(
+    JSON.parse(JSON.stringify(order.toJSON()))
+  ).consume(relayedOrder.assetAmountTo);
+
+  return {
+    inputs: transferTx.getTransferredAsset(3).createTransferInput(),
+    order: updatedOrder
+  };
 }
