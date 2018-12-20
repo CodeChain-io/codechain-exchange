@@ -41,6 +41,8 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 interface Model {
+  sequelize: Sequelize.Sequelize;
+  Sequelize: Sequelize.SequelizeStatic;
   Order: Sequelize.Model<OrderInstance, OrderAttriubutes>;
   Deal: Sequelize.Model<DealInstance, DealAttriubutes>;
 }
