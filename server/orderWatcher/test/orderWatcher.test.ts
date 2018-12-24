@@ -1,5 +1,6 @@
 import { H256 } from "codechain-primitives/lib";
 import { SDK } from "codechain-sdk";
+import { Server } from "../../../app";
 import { controllers } from "../../controllers";
 import db from "../../models";
 import { OrderWatcher } from "../orderWatcher";
@@ -11,7 +12,7 @@ const expect = chai.expect;
 // To execute test, change orderWatcher's target node to localhost
 describe("OrderWatcher basic test", () => {
   const sdk = new SDK({
-    server: process.env.CODECHAIN_RPC_HTTP || "http://127.0.0.1:8080",
+    server: process.env.CODECHAIN_RPC_HTTP || Server.chain,
     networkId: process.env.CODECHAIN_NETWORK_ID || "tc"
   });
   const orderWatcher = new OrderWatcher();

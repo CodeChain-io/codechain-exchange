@@ -1,0 +1,245 @@
+{
+  "type": "assetTransfer",
+  "data": {
+    "networkId": "tc",
+    "burns": [],
+    "inputs": [
+      {
+        "prevOut": {
+          "transactionHash": "0xf95d39fc0309f6c0a2db80b4a7bd58be031b7bf94854d97b648d67dd1f115a99",
+          "index": 0,
+          "assetType": "0x53000000035e5ed648ca901ebe0bc8f4e378edb1636c4b1389ac637d14142fac",
+          "amount": "0x2710"
+        },
+        "timelock": null,
+        "lockScript": [],
+        "unlockScript": []
+      },
+      {
+        "prevOut": {
+          "transactionHash": "0xe56d65c69e5840ba3bfce8f0dd0bc85ec22e9a017e310efb6d7abbe09f96a516",
+          "index": 0,
+          "assetType": "0x5300000054d9ee71925a3723d0abbb3a722ab9f8fcb33b1f762390127be4ebc1",
+          "amount": "0x186a0"
+        },
+        "timelock": null,
+        "lockScript": [],
+        "unlockScript": []
+      }
+    ],
+    "outputs": [
+      {
+        "lockScriptHash": "0x5f5960a7bca6ceeeb0c97bc717562914e7a1de04",
+        "parameters": [
+          [
+            40,
+            87,
+            235,
+            81,
+            163,
+            200,
+            131,
+            120,
+            52,
+            46,
+            215,
+            64,
+            157,
+            195,
+            204,
+            130,
+            169,
+            15,
+            231,
+            113
+          ]
+        ],
+        "assetType": "0x5300000054d9ee71925a3723d0abbb3a722ab9f8fcb33b1f762390127be4ebc1",
+        "amount": "0x3e8"
+      },
+      {
+        "lockScriptHash": "0x5f5960a7bca6ceeeb0c97bc717562914e7a1de04",
+        "parameters": [
+          [
+            239,
+            186,
+            233,
+            156,
+            36,
+            157,
+            88,
+            93,
+            33,
+            116,
+            149,
+            73,
+            211,
+            232,
+            222,
+            201,
+            43,
+            188,
+            139,
+            22
+          ]
+        ],
+        "assetType": "0x53000000035e5ed648ca901ebe0bc8f4e378edb1636c4b1389ac637d14142fac",
+        "amount": "0x64"
+      },
+      {
+        "lockScriptHash": "0x5f5960a7bca6ceeeb0c97bc717562914e7a1de04",
+        "parameters": [
+          [
+            40,
+            87,
+            235,
+            81,
+            163,
+            200,
+            131,
+            120,
+            52,
+            46,
+            215,
+            64,
+            157,
+            195,
+            204,
+            130,
+            169,
+            15,
+            231,
+            113
+          ]
+        ],
+        "assetType": "0x53000000035e5ed648ca901ebe0bc8f4e378edb1636c4b1389ac637d14142fac",
+        "amount": "0x26ac"
+      },
+      {
+        "lockScriptHash": "0x5f5960a7bca6ceeeb0c97bc717562914e7a1de04",
+        "parameters": [
+          [
+            239,
+            186,
+            233,
+            156,
+            36,
+            157,
+            88,
+            93,
+            33,
+            116,
+            149,
+            73,
+            211,
+            232,
+            222,
+            201,
+            43,
+            188,
+            139,
+            22
+          ]
+        ],
+        "assetType": "0x5300000054d9ee71925a3723d0abbb3a722ab9f8fcb33b1f762390127be4ebc1",
+        "amount": "0x182b8"
+      }
+    ],
+    "orders": [
+      {
+        "order": {
+          "assetTypeFrom": "0x53000000035e5ed648ca901ebe0bc8f4e378edb1636c4b1389ac637d14142fac",
+          "assetTypeTo": "0x5300000054d9ee71925a3723d0abbb3a722ab9f8fcb33b1f762390127be4ebc1",
+          "assetTypeFee": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "assetAmountFrom": "0x64",
+          "assetAmountTo": "0x3e8",
+          "assetAmountFee": "0x0",
+          "originOutputs": [
+            {
+              "transactionHash": "0xf95d39fc0309f6c0a2db80b4a7bd58be031b7bf94854d97b648d67dd1f115a99",
+              "index": 0,
+              "assetType": "0x53000000035e5ed648ca901ebe0bc8f4e378edb1636c4b1389ac637d14142fac",
+              "amount": "0x2710"
+            }
+          ],
+          "expiration": "1545385844",
+          "lockScriptHash": "0x5f5960a7bca6ceeeb0c97bc717562914e7a1de04",
+          "parameters": [
+            [
+              40,
+              87,
+              235,
+              81,
+              163,
+              200,
+              131,
+              120,
+              52,
+              46,
+              215,
+              64,
+              157,
+              195,
+              204,
+              130,
+              169,
+              15,
+              231,
+              113
+            ]
+          ]
+        },
+        "spentAmount": "0x64",
+        "inputIndices": [0],
+        "outputIndices": []
+      },
+      {
+        "order": {
+          "assetTypeFrom": "0x5300000054d9ee71925a3723d0abbb3a722ab9f8fcb33b1f762390127be4ebc1",
+          "assetTypeTo": "0x53000000035e5ed648ca901ebe0bc8f4e378edb1636c4b1389ac637d14142fac",
+          "assetTypeFee": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "assetAmountFrom": "0x3e8",
+          "assetAmountTo": "0x64",
+          "assetAmountFee": "0x0",
+          "originOutputs": [
+            {
+              "transactionHash": "0xe56d65c69e5840ba3bfce8f0dd0bc85ec22e9a017e310efb6d7abbe09f96a516",
+              "index": 0,
+              "assetType": "0x5300000054d9ee71925a3723d0abbb3a722ab9f8fcb33b1f762390127be4ebc1",
+              "amount": "0x186a0"
+            }
+          ],
+          "expiration": "1545385844",
+          "lockScriptHash": "0x5f5960a7bca6ceeeb0c97bc717562914e7a1de04",
+          "parameters": [
+            [
+              40,
+              87,
+              235,
+              81,
+              163,
+              200,
+              131,
+              120,
+              52,
+              46,
+              215,
+              64,
+              157,
+              195,
+              204,
+              130,
+              169,
+              15,
+              231,
+              113
+            ]
+          ]
+        },
+        "spentAmount": "0x3e8",
+        "inputIndices": [1],
+        "outputIndices": []
+      }
+    ]
+  }
+}

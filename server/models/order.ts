@@ -25,7 +25,7 @@ export default (
     {
       makerAsset: DataTypes.STRING,
       takerAsset: DataTypes.STRING,
-      amount: DataTypes.BIGINT,
+      amount: DataTypes.INTEGER,
       rate: DataTypes.DOUBLE,
       makerAddress: DataTypes.STRING,
       assetList: DataTypes.JSON,

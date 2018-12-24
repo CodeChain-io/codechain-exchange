@@ -10,7 +10,7 @@ module.exports = {
           "deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
         takerAsset:
           "cafebabecafebabecafebabecafebabecafebabecafebabecafebabecafebabe",
-        amount: 10,
+        amount: "10",
         rate: Math.round((i + 1) / 5),
         makerAddress: "testMaker",
         assetList: { input: 10 },
@@ -24,7 +24,7 @@ module.exports = {
           "cafebabecafebabecafebabecafebabecafebabecafebabecafebabecafebabe",
         takerAsset:
           "deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
-        amount: 10,
+        amount: "10",
         rate: Math.round((i + 1) / 5),
         makerAddress: "testMaker",
         assetList: { input: "testTransaction" },

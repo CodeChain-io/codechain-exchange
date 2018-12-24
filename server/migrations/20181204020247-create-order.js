@@ -18,7 +18,7 @@ module.exports = {
       },
       amount: {
         allowNull: false,
-        type: Sequelize.BIGINT
+        type: Sequelize.INTEGER
       },
       rate: {
         allowNull: false,

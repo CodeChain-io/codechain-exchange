@@ -1,6 +1,7 @@
 {
   "dex-asset-address": "tcaqyqsdk4knmjdr5upjf6enlx0dgr6f4st4vcq6rgl33",
-  "dex-platform-address": "tccq9pjvm7cx6xmzkurvj7qdkycwrelqv8a2vdl4ara",
+  "dex-platform-address": "tccq9h7vnl68frvqapzv3tujrxtxtwqdnxw6yamrrgd",
+  "dex-passphrase": "satoshi",
   "market": {
     "testMarket": {
       "id": 0,
@@ -29,17 +30,22 @@
     }
   },
   "server": {
-    "ndexer": {
-      "cc": "https://husky.codechain.io/explorer",
-      "tc": "https://husky.codechain.io/explorer",
-      "sc": "https://saluki.codechain.io/explorer",
-      "wc": "https://corgi.codechain.io/explorer"
+    "cc": {
+      "indexer": "https://husky.codechain.io/explorer",
+      "chain": "https://husky.codechain.io/explorer"
     },
-    "chain": {
-      "cc": "https://husky.codechain.io/explorer",
-      "tc": "http://52.79.108.1:8080",
-      "sc": "http://52.78.210.78:8080",
-      "wc": "http://52.78.215.10:8080"
-    }
+    "tc": {
+      "indexer": "https://husky.codechain.io/explorer",
+      "chain": "http://52.79.108.1:8080"
+    },
+    "sc": {
+      "indexer": "https://saluki.codechain.io/explorer",
+      "chain": "http://52.78.210.78:8080"
+    },
+    "wc": {
+      "indexer": "https://corgi.codechain.io/explorer",
+      "chain": "http://52.78.215.10:8080"
+    },
+    "local": { "chain": "http://127.0.0.1:8080" }
   }
 }

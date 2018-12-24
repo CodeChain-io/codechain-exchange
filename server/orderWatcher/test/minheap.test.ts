@@ -1,4 +1,4 @@
-import { Minheap } from "./minheap";
+import { Minheap } from "../minheap";
 
 import * as chai from "chai";
 
