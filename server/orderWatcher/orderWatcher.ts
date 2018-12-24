@@ -1,8 +1,9 @@
 import { H256 } from "codechain-primitives/lib";
 import { SDK } from "codechain-sdk";
-// import * as Config from "../config/dex.json";
+import { Server } from "../../app";
 import * as OrderControlller from "../controllers/order";
 import { Minheap } from "./minheap";
+
 const EventEmitter = require("events");
 
 class MyEmitter extends EventEmitter {}
@@ -47,7 +48,7 @@ export class OrderWatcher {
   }
 
   public async checkValidity(): Promise<void> {
-    const sdk = new SDK({ server: "http://127.0.0.1:8080" });
+    const sdk = new SDK({ server: Server.chain });
     for (let i = 0; i < this.validityCheckList.length; i++) {
       const order = this.validityCheckList[i];
       for (const [txHash, index] of order[1]) {

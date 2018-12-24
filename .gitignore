@@ -4,6 +4,7 @@ node_modules
 ./client/node_modules
 ./client/dist/*
 /log
+keystore.db
 
 # local env files
 .env.local

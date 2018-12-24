@@ -5,6 +5,11 @@ import * as path from "path";
 import rfs from "rotating-file-stream";
 import route from "./server/routes";
 
+const env = process.env.NODE_ENV || "local";
+export const Server = require(`${__dirname}/server/config/dex.json`).server[
+  env
+];
+
 // Set up the express app
 const app = express();
 
