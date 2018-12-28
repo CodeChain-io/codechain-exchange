@@ -26,3 +26,16 @@ export async function find(
     where
   });
 }
+
+export async function getUserDeal(
+  assetAddresses: string[]
+): Promise<DealInstance[]> {
+  let deals: DealInstance[] = [];
+  for (const address of assetAddresses) {
+    const dealIns = await db.Deal.findAll({
+      where: { makerAsset: address }
+    });
+    deals = deals.concat(dealIns);
+  }
+  return deals;
+}
