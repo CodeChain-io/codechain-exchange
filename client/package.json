@@ -5,11 +5,13 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "fmt": "prettier '{src,public}/**/*.{vue,ts,js,json,scss}' --write"
+    "fmt": "tslint -p . --fix && prettier '{src,public}/**/*.{vue,ts,js,json,scss}' --write"
   },
   "dependencies": {
     "@types/highcharts": "^5.0.33",
     "@types/vue": "^2.0.0",
+    "axios": "^0.18.0",
+    "bootstrap-vue": "^2.0.0-rc.11",
     "bourbon": "^5.1.0",
     "highcharts": "^6.2.0",
     "highcharts-vue": "^1.2.0",
@@ -27,7 +29,7 @@
     "node-sass": "^4.10.0",
     "sass-loader": "^7.1.0",
     "style-resources-loader": "^1.2.1",
-    "typescript": "^3.0.0",
+    "typescript": "^3.2.1",
     "vue-cli-plugin-style-resources-loader": "^0.1.3",
     "vue-template-compiler": "^2.5.17"
   },

@@ -1,7 +1,5 @@
 <template>
   <div class="buy-sell">
-    <div class="table-name">Order</div>
-
     <div class="tabnav">
       <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
         <li class="nav-item">
@@ -180,11 +178,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 
 @Component
 export default class BuySell extends Vue {
-  click(msg: String) {
+  public click(msg: string) {
     alert(msg);
   }
 }
@@ -220,17 +218,6 @@ p {
 
 .tab-content {
   font-family: $font;
-}
-
-/* CONTENT NAME */
-div.table-name {
-  width: 90%;
-  margin: 0 auto;
-  text-align: left;
-  height: 40px;
-  padding: 5px;
-  font-family: $font;
-  font-size: 20px;
 }
 
 /* WINDOW BACKGROUND */

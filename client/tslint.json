@@ -1,19 +1,25 @@
 {
-  "defaultSeverity": "warning",
-  "extends": [
-    "tslint:recommended"
-  ],
-  "linterOptions": {
-    "exclude": [
-      "node_modules/**"
-    ]
-  },
+  "extends": ["tslint:recommended", "tslint-config-prettier"],
   "rules": {
-    "quotemark": [true, "single"],
-    "indent": [true, "spaces", 2],
     "interface-name": false,
-    "ordered-imports": false,
+    "variable-name": [
+      true,
+      "check-format",
+      "allow-leading-underscore",
+      "allow-pascal-case"
+    ],
+    "no-console": false,
     "object-literal-sort-keys": false,
-    "no-consecutive-blank-lines": false
+    "no-var-requires": false,
+    "max-classes-per-file": false,
+    "no-bitwise": false,
+    "array-type": false
+  },
+  "jsRules": {
+    "no-console": false,
+    "object-literal-sort-keys": false
+  },
+  "linterOptions": {
+    "exclude": ["node_modules/**/*.ts"]
   }
 }
