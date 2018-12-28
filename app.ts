@@ -29,12 +29,9 @@ app.use(logger("combined", { stream: accessLogStream }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+const cors = require("cors");
+app.use(cors());
 // Setup a default catch-all route that sends back a welcome message in JSON format.
 route(app);
-app.get("*", (_req, res) =>
-  res.status(200).send({
-    message: "snothingness."
-  })
-);
 
 export default app;

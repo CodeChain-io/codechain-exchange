@@ -22,6 +22,7 @@
     "chai": "^4.2.0",
     "codechain-primitives": "^0.4.4",
     "codechain-sdk": "https://github.com/CodeChain-io/codechain-sdk-js.git#eee5d450b69e128bda39ac33820c7b43a6e4e13a",
+    "cors": "^2.8.5",
     "express": "^4.16.4",
     "mocha": "^5.2.0",
     "morgan": "^1.9.1",
