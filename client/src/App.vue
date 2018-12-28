@@ -1,7 +1,6 @@
 <template>
   <div id="app">
-    <Banner></Banner>
-    <PriceBar token1="token1" token2="toekn2" volume="10"></PriceBar>
+    <Banner class="banner"></Banner>
     <Content class="contents"></Content>
   </div>
 </template>
@@ -9,13 +8,19 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Banner from "./components/Banner.vue";
-import PriceBar from "./components/PriceBar.vue";
 import Content from "./components/Contents.vue";
+
+(async () => {
+  const login = await window.walletAPI.isAuthenticated();
+  if (!login) {
+    alert("Please login");
+    location.reload();
+  }
+})();
 
 @Component({
   components: {
     Banner,
-    PriceBar,
     Content
   }
 })
@@ -34,5 +39,8 @@ export default class App extends Vue {}
 }
 .contents {
   height: calc(100vh - 130px);
+}
+.banner {
+  margin-bottom: 1rem;
 }
 </style>
