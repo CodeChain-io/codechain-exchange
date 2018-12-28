@@ -13,6 +13,7 @@ describe("Order matching basic test", () => {
       server: process.env.CODECHAIN_RPC_HTTP || Server.chain,
       networkId: process.env.CODECHAIN_NETWORK_ID || "tc"
     });
+
     const ACCOUNT_ADDRESS =
       process.env.ACCOUNT_ADDRESS ||
       "tccq9h7vnl68frvqapzv3tujrxtxtwqdnxw6yamrrgd";
@@ -130,7 +131,7 @@ describe("Order matching basic test", () => {
         .toEncodeObject()
         .slice(2);
 
-      // await sdk.key.signTransactionInputWithOrder(goldInput, aliceOrder);
+      await sdk.key.signTransactionInputWithOrder(goldInput, aliceOrder);
       await controllers.orderController.submit(
         [goldInput],
         aliceOrder,
@@ -138,7 +139,7 @@ describe("Order matching basic test", () => {
         aliceAddress.toString()
       );
 
-      // await sdk.key.signTransactionInputWithOrder(silverInput, BobOrder);
+      await sdk.key.signTransactionInputWithOrder(silverInput, BobOrder);
       await controllers.orderController.submit(
         [silverInput],
         BobOrder,
