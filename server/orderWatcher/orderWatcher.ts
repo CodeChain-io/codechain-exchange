@@ -68,7 +68,6 @@ export class OrderWatcher {
     if (min === null) {
       return;
     }
-
     if (min[1] - Math.round(Date.now() / 1000) <= 0) {
       this.expirationCheckList.extractMin();
       myEmitter.emit("expire", min[0]);

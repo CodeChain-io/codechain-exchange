@@ -130,7 +130,6 @@ describe("OrderWatcher basic test", () => {
         100
       );
 
-      orderWatcher.stop();
       expect(list.length).to.equal(0);
     })().catch(async error => {
       console.error(`Error:`, error);
