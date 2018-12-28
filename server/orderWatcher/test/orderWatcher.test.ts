@@ -79,7 +79,7 @@ describe("OrderWatcher basic test", () => {
         assetAmountTo: 1000,
         expiration,
         originOutputs: [goldInput.prevOut],
-        recipient: aliceAddress
+        recipientFrom: aliceAddress
       });
 
       const id = await controllers.orderController.submit(
@@ -197,7 +197,7 @@ describe("OrderWatcher basic test", () => {
         assetAmountTo: 1000,
         expiration,
         originOutputs: [goldInput.prevOut],
-        recipient: aliceAddress
+        recipientFrom: aliceAddress
       });
 
       const id = await controllers.orderController.submit(
