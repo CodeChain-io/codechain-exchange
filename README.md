@@ -4,7 +4,7 @@ Decentralized exchange platform for an asset on the CodeChain
 
 ## Getting Started
 
-Download CodeChain exchange code
+## Download CodeChain exchange code
 
 ```
 # git clone https://github.com/CodeChain-io/codechain-exchange.git
@@ -17,7 +17,7 @@ Download CodeChain exchange code
 # yarn start
 ```
 
-Start server in develop mode
+## Start server in develop mode
 
 ```
 # yarn start-dev
@@ -30,7 +30,7 @@ Start server in develop mode
 # yarn serve
 ```
 
-## Prerequisites
+### Prerequisites
 
 ```
 # yarn install
@@ -45,14 +45,14 @@ Start server in develop mode
 
 ## Deployment
 
-DB migration and undo migration
+## DB migration and undo migration
 
 ```
 # yarn migration
 # yarn undo-migration
 ```
 
-Insert seed data into DB
+## Insert seed data into DB
 
 ```
 # yarn seed
@@ -62,4 +62,10 @@ Insert seed data into DB
 ## Formatting
 ```
 # yarn fmt
+```
+
+## Formatting
+
+```
+yarn fmt
 ```
