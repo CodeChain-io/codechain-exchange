@@ -23,7 +23,7 @@ yarn start
 yarn start-dev
 ```
 
-## Start client
+## Start client (Not implemented)
 
 ```
 cd client
