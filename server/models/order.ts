@@ -28,9 +28,14 @@ export default (
       amount: DataTypes.INTEGER,
       rate: DataTypes.DOUBLE,
       makerAddress: DataTypes.STRING,
+      // Input list
       assetList: DataTypes.JSON,
+      // OrderInfo
       order: DataTypes.JSON,
-      marketId: DataTypes.INTEGER
+      // SplitTx
+      splitTx: DataTypes.JSON,
+      marketId: DataTypes.INTEGER,
+      semaphores: DataTypes.BOOLEAN
     },
     {}
   );
