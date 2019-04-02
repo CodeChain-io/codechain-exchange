@@ -1,5 +1,6 @@
 import * as express from "express";
 import { controllers } from "../controllers";
+import { engine } from "../engine";
 
 export default function dealRoute(app: express.Express) {
   app.get("/api/deal/find", (req, res) => {
@@ -17,7 +18,7 @@ export default function dealRoute(app: express.Express) {
   });
 
   app.post("api/deal/userdeal", (req, res) => {
-    controllers.dealController
+    engine.history
       .getUserDeal(req.body.addresses)
       .then(deals => {
         res.status(201).send(deals);
