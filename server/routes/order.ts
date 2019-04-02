@@ -2,6 +2,7 @@ import { AssetTransferInput, Order } from "codechain-sdk/lib/core/classes";
 import { AssetTransferInputJSON } from "codechain-sdk/lib/core/transaction/AssetTransferInput";
 import * as express from "express";
 import { controllers } from "../controllers";
+import { engine } from "../engine";
 
 export default function orderRoute(app: express.Express) {
   app.get("/api/order/find", (req, res) => {
@@ -25,7 +26,7 @@ export default function orderRoute(app: express.Express) {
       res.status(400).send("ranage is undefined");
       return;
     }
-    controllers.orderController
+    engine.orderbook
       .orderbook(req.query.range)
       .then(orders => res.status(201).send(orders))
       .catch(err => res.status(400).send(err.message));
@@ -49,7 +50,7 @@ export default function orderRoute(app: express.Express) {
 
   app.post("/api/order/userorder", (req, res) => {
     console.log(req.body.addresses);
-    controllers.orderController
+    engine.history
       .getUserOrder(req.body.addresses)
       .then(orders => {
         res.status(201).send(orders);
