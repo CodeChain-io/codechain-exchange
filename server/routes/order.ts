@@ -33,7 +33,7 @@ export default function orderRoute(app: express.Express) {
   });
 
   app.post("/api/order/submit", (req, res) => {
-    controllers.orderController
+    engine.matching
       .submit(
         (req.body.assetList as AssetTransferInputJSON[]).map(input =>
           AssetTransferInput.fromJSON(input)
@@ -42,10 +42,10 @@ export default function orderRoute(app: express.Express) {
         req.body.marketId,
         req.body.makerAddress
       )
-      .then(_ => {
+      .then((_: any) => {
         res.status(201).send({ message: "success" });
       })
-      .catch(err => res.status(400).send(err.message));
+      .catch((err: any) => res.status(400).send(err.message));
   });
 
   app.post("/api/order/userorder", (req, res) => {

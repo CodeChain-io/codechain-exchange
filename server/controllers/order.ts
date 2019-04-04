@@ -1,6 +1,5 @@
-
 import db from "../models";
-import {OrderInstance } from "../models/order";
+import { OrderInstance } from "../models/order";
 
 export async function create(
   makerAsset: string,
