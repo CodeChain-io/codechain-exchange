@@ -56,7 +56,7 @@ export async function destroy(id: number): Promise<void> {
 export async function update(id: number, body: any): Promise<DealInstance> {
   const deal = await db.Deal.findById(id);
   if (!deal) {
-    throw { message: "Deal Not Found" }
+    throw { message: "Deal Not Found" };
   }
   return deal.update(body, { fields: Object.keys(body) });
 }

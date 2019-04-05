@@ -3,6 +3,7 @@ import * as path from "path";
 import * as Sequelize from "sequelize";
 import { DealAttriubutes, DealInstance } from "./deal";
 import { OrderAttriubutes, OrderInstance } from "./order";
+import { PriceAttriubutes, PriceInstance } from "./price";
 
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || "development";
@@ -45,6 +46,7 @@ interface Model {
   Sequelize: Sequelize.SequelizeStatic;
   Order: Sequelize.Model<OrderInstance, OrderAttriubutes>;
   Deal: Sequelize.Model<DealInstance, DealAttriubutes>;
+  Price: Sequelize.Model<PriceInstance, PriceAttriubutes>;
 }
 
 export default db as Model;
