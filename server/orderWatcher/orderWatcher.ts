@@ -2,13 +2,8 @@ import { H256 } from "codechain-primitives/lib";
 import { SDK } from "codechain-sdk";
 import { Server } from "../../app";
 import * as OrderControlller from "../controllers/order";
+import { myEmitter } from "./event"
 import { Minheap } from "./minheap";
-
-const EventEmitter = require("events");
-
-class MyEmitter extends EventEmitter {}
-
-const myEmitter = new MyEmitter();
 
 export class OrderWatcher {
   private validityCheckList: [number, [H256, number][]][];

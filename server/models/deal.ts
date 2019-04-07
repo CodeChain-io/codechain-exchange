@@ -12,7 +12,7 @@ export interface DealAttriubutes {
   updatedAt?: string;
 }
 
-export interface DealInstance extends Sequelize.Instance<DealAttriubutes> {}
+export interface DealInstance extends Sequelize.Instance<DealAttriubutes> { }
 
 export default (
   sequelize: Sequelize.Sequelize,
@@ -30,7 +30,7 @@ export default (
     },
     {}
   );
-  Deal.associate = _models => {
+  Deal.associate = _ => {
     // associations can be defined here
   };
   return Deal;

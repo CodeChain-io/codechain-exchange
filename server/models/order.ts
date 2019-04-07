@@ -14,7 +14,7 @@ export interface OrderAttriubutes {
   updatedAt?: string;
 }
 
-export interface OrderInstance extends Sequelize.Instance<OrderAttriubutes> {}
+export interface OrderInstance extends Sequelize.Instance<OrderAttriubutes> { }
 
 export default (
   sequelize: Sequelize.Sequelize,
@@ -39,7 +39,7 @@ export default (
     },
     {}
   );
-  Order.associate = _models => {
+  Order.associate = _ => {
     // associations can be defined here
   };
   return Order;

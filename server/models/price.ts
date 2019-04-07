@@ -8,7 +8,7 @@ export interface PriceAttriubutes {
   updatedAt?: string;
 }
 
-export interface PriceInstance extends Sequelize.Instance<PriceAttriubutes> {}
+export interface PriceInstance extends Sequelize.Instance<PriceAttriubutes> { }
 
 export default (
   sequelize: Sequelize.Sequelize,
@@ -22,7 +22,7 @@ export default (
     },
     {}
   );
-  Price.associate = _models => {
+  Price.associate = _ => {
     // associations can be defined here
   };
   return Price;
