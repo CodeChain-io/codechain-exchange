@@ -14,7 +14,7 @@ export interface OrderAttriubutes {
   updatedAt?: string;
 }
 
-export interface OrderInstance extends Sequelize.Instance<OrderAttriubutes> { }
+export interface OrderInstance extends Sequelize.Instance<OrderAttriubutes> {}
 
 export default (
   sequelize: Sequelize.Sequelize,

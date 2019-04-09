@@ -8,7 +8,7 @@ export interface PriceAttriubutes {
   updatedAt?: string;
 }
 
-export interface PriceInstance extends Sequelize.Instance<PriceAttriubutes> { }
+export interface PriceInstance extends Sequelize.Instance<PriceAttriubutes> {}
 
 export default (
   sequelize: Sequelize.Sequelize,

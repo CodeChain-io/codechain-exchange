@@ -2,7 +2,7 @@ import { H256 } from "codechain-primitives/lib";
 import { SDK } from "codechain-sdk";
 import { Server } from "../../app";
 import * as OrderControlller from "../controllers/order";
-import { myEmitter } from "./event"
+import { myEmitter } from "./event";
 import { Minheap } from "./minheap";
 
 export class OrderWatcher {

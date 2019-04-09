@@ -1,19 +1,17 @@
-import { U64 } from "codechain-primitives/lib";
+import { H256, U64 } from "codechain-primitives";
 import { SDK } from "codechain-sdk";
-import {
-  AssetOutPoint,
-  AssetTransferInput,
-  H256,
-  Order
-} from "codechain-sdk/lib/core/classes";
+import { AssetOutPoint } from "codechain-sdk/lib/core/transaction/AssetOutPoint";
+import { AssetTransferInput } from "codechain-sdk/lib/core/transaction/AssetTransferInput";
 import { AssetTransferInputJSON } from "codechain-sdk/lib/core/transaction/AssetTransferInput";
+import { Order } from "codechain-sdk/lib/core/transaction/Order";
+import { TransferAsset } from "codechain-sdk/lib/core/transaction/TransferAsset";
 import { Server } from "../../app";
 import * as Config from "../config/dex.json";
 import { controllers } from "../controllers";
 import { OrderAttriubutes, OrderInstance } from "../models/order";
 
 // FIXME - use codechain RPC
-function executeScript(_inputs: AssetTransferInput[]): boolean {
+function executeScript(_: AssetTransferInput[]): boolean {
   console.log("Not implemented");
   return true;
 }
@@ -26,15 +24,22 @@ export async function submit(
   assetList: AssetTransferInput[],
   order: Order,
   marketId: number,
-  makerAddress: string
+  makerAddress: string,
+  splitTx?: TransferAsset
 ): Promise<void | number> {
+  let isSplit: boolean = null;
+  if (splitTx === null) {
+    isSplit = false;
+    console.log("splitTx is along with orderTx" + isSplit);
+  }
+
   if (!checkTX(assetList)) {
     throw Error("Invalid transaction - 0");
   }
 
   const assetTypeFrom: H256 = order.assetTypeFrom;
   const assetTypeTo: H256 = order.assetTypeTo;
-  const assetAmountFrom: number = order.assetAmountFrom.value.toNumber();
+  const assetQuantityFrom: number = order.assetQuantityFrom.value.toNumber();
   const rate = getRate(order, marketId);
 
   if (rate === null) {
@@ -56,7 +61,7 @@ export async function submit(
     const ins = await controllers.orderController.create(
       assetTypeFrom.toEncodeObject().slice(2),
       assetTypeTo.toEncodeObject().slice(2),
-      assetAmountFrom,
+      assetQuantityFrom,
       rate,
       makerAddress,
       JSON.parse(JSON.stringify(assetList.map(input => input.toJSON()))),
@@ -101,8 +106,8 @@ function checkTX(inputs: AssetTransferInput[]): boolean {
 function getRate(order: Order, marketId: number): number | null {
   const assetTypeFrom: H256 = order.assetTypeFrom;
   const assetTypeTo: H256 = order.assetTypeTo;
-  const assetAmountFrom: U64 = order.assetAmountFrom;
-  const assetAmountTo: U64 = order.assetAmountTo;
+  const assetQuantityFrom: U64 = order.assetQuantityFrom;
+  const assetQuantityTo: U64 = order.assetQuantityTo;
 
   // Check if the market ID is valid
   let marketConfig: { id: number; asset1: string; asset2: string };
@@ -121,12 +126,12 @@ function getRate(order: Order, marketId: number): number | null {
     marketConfig.asset1 === assetTypeFrom.toEncodeObject().slice(2) &&
     marketConfig.asset2 === assetTypeTo.toEncodeObject().slice(2)
   ) {
-    rate = assetAmountTo.value.dividedBy(assetAmountFrom.value).toNumber();
+    rate = assetQuantityTo.value.dividedBy(assetQuantityFrom.value).toNumber();
   } else if (
     marketConfig.asset2 === assetTypeFrom.toEncodeObject().slice(2) &&
     marketConfig.asset1 === assetTypeTo.toEncodeObject().slice(2)
   ) {
-    rate = assetAmountFrom.value.dividedBy(assetAmountTo.value).toNumber();
+    rate = assetQuantityFrom.value.dividedBy(assetQuantityTo.value).toNumber();
   } else {
     return null;
   }
@@ -152,7 +157,7 @@ async function matchOrder(
       const ins = await controllers.orderController.create(
         order.assetTypeFrom.toEncodeObject().slice(2),
         order.assetTypeTo.toEncodeObject().slice(2),
-        order.assetAmountFrom.value.toNumber(),
+        order.assetQuantityFrom.value.toNumber(),
         rate,
         makerAddress,
         JSON.parse(JSON.stringify(inputs.map(input => input.toJSON()))),
@@ -175,7 +180,7 @@ async function matchOrder(
     );
 
     // Check a validity of orders
-    if (remained !== relayedOrder.assetAmountFrom.value.toNumber()) {
+    if (remained !== relayedOrder.assetQuantityFrom.value.toNumber()) {
       throw Error("Order is broken - 0");
     }
     if (
@@ -189,21 +194,21 @@ async function matchOrder(
     const relayedAddress = matchedOrder.makerAddress;
     let relayedAmount: number = 0;
     for (const input of relayedInputs) {
-      relayedAmount += input.prevOut.amount.value.toNumber();
+      relayedAmount += input.prevOut.quantity.value.toNumber();
     }
-    if (relayedAmount < relayedOrder.assetAmountFrom.value.toNumber()) {
+    if (relayedAmount < relayedOrder.assetQuantityFrom.value.toNumber()) {
       throw Error("Order is broken - 2");
     }
     let incomingAmount: number = 0;
     for (const input of inputs) {
-      incomingAmount += input.prevOut.amount.value.toNumber();
+      incomingAmount += input.prevOut.quantity.value.toNumber();
     }
-    if (incomingAmount < order.assetAmountFrom.value.toNumber()) {
+    if (incomingAmount < order.assetQuantityFrom.value.toNumber()) {
       throw Error("Order is broken - 3");
     }
 
     // In case that matched order is fully filled
-    if (remained === order.assetAmountTo.value.toNumber()) {
+    if (remained === order.assetQuantityTo.value.toNumber()) {
       await matchSame(
         sdk,
         relayedInputs,
@@ -217,7 +222,7 @@ async function matchOrder(
       return null;
     }
     // In case that matched order is partially filled
-    else if (remained > order.assetAmountTo.value.toNumber()) {
+    else if (remained > order.assetQuantityTo.value.toNumber()) {
       await matchAbove(
         sdk,
         relayedInputs,
@@ -260,46 +265,50 @@ async function matchSame(
 ): Promise<void> {
   // Add asset newely gain
   const transferTx = sdk.core
-    .createAssetTransferTransaction()
+    .createTransferAssetTransaction()
     .addInputs(relayedInputs)
     .addInputs(inputs)
     .addOutputs(
       {
         recipient: relayedAddress,
-        amount: relayedOrder.assetAmountTo,
-        assetType: matchedOrder.takerAsset
+        quantity: relayedOrder.assetQuantityTo,
+        assetType: matchedOrder.takerAsset,
+        shardId: 0
       },
       {
         recipient: makerAddress,
-        amount: relayedOrder.assetAmountFrom,
-        assetType: matchedOrder.makerAsset
+        quantity: relayedOrder.assetQuantityFrom,
+        assetType: matchedOrder.makerAsset,
+        shardId: 0
       }
     );
 
   // Add remain asset
   let relayedAmount: number = 0;
   for (const input of relayedInputs) {
-    relayedAmount += input.prevOut.amount.value.toNumber();
+    relayedAmount += input.prevOut.quantity.value.toNumber();
   }
   const relayedRemainedAsset =
-    relayedAmount - relayedOrder.assetAmountFrom.value.toNumber();
+    relayedAmount - relayedOrder.assetQuantityFrom.value.toNumber();
   if (relayedRemainedAsset > 0) {
     transferTx.addOutputs({
       recipient: relayedAddress,
-      amount: relayedRemainedAsset,
-      assetType: matchedOrder.makerAsset
+      quantity: relayedRemainedAsset,
+      assetType: matchedOrder.makerAsset,
+      shardId: 0
     });
   }
   let amount: number = 0;
   for (const input of inputs) {
-    amount += input.prevOut.amount.value.toNumber();
+    amount += input.prevOut.quantity.value.toNumber();
   }
-  const remainedAsset = amount - relayedOrder.assetAmountTo.value.toNumber();
+  const remainedAsset = amount - relayedOrder.assetQuantityTo.value.toNumber();
   if (remainedAsset > 0) {
     transferTx.addOutputs({
       recipient: makerAddress,
-      amount: remainedAsset,
-      assetType: matchedOrder.takerAsset
+      quantity: remainedAsset,
+      assetType: matchedOrder.takerAsset,
+      shardId: 0
     });
   }
 
@@ -307,27 +316,20 @@ async function matchSame(
   transferTx
     .addOrder({
       order: relayedOrder,
-      spentAmount: relayedOrder.assetAmountFrom,
+      spentQuantity: relayedOrder.assetQuantityFrom,
       inputIndices: Array.from(Array(relayedInputs.length).keys()),
       outputIndices: [0, 2]
     })
     .addOrder({
       order,
-      spentAmount: relayedOrder.assetAmountTo,
+      spentQuantity: relayedOrder.assetQuantityTo,
       inputIndices: Array.from(
         Array(relayedInputs.length + inputs.length).keys()
       ).slice(relayedInputs.length),
       outputIndices: [1, 3]
     });
   // FIXME - Add fee payment Output
-  console.log(JSON.stringify(transferTx.toJSON()));
-  const fillParcel = sdk.core.createAssetTransactionParcel({
-    transaction: transferTx
-  });
-  await sdk.rpc.chain.sendParcel(fillParcel, {
-    account: Config["dex-platform-address"],
-    passphrase: Config["dex-passphrase"]
-  });
+  // FIXME - Confirm the transaction
 
   await controllers.orderController.destroy(parseInt(matchedOrder.id, 10));
 }
@@ -344,46 +346,50 @@ async function matchAbove(
 ): Promise<void> {
   // Add asset newely gain
   const transferTx = sdk.core
-    .createAssetTransferTransaction()
+    .createTransferAssetTransaction()
     .addInputs(relayedInputs)
     .addInputs(inputs)
     .addOutputs(
       {
         recipient: relayedAddress,
-        amount: order.assetAmountFrom,
-        assetType: matchedOrder.takerAsset
+        quantity: order.assetQuantityFrom,
+        assetType: matchedOrder.takerAsset,
+        shardId: 0
       },
       {
         recipient: makerAddress,
-        amount: order.assetAmountTo,
-        assetType: matchedOrder.makerAsset
+        quantity: order.assetQuantityTo,
+        assetType: matchedOrder.makerAsset,
+        shardId: 0
       }
     );
 
   // Add remain asset
   let relayedAmount: number;
   for (const input of relayedInputs) {
-    relayedAmount += input.prevOut.amount.value.toNumber();
+    relayedAmount += input.prevOut.quantity.value.toNumber();
   }
   const relayedRemainedAsset =
-    relayedAmount - order.assetAmountTo.value.toNumber();
+    relayedAmount - order.assetQuantityTo.value.toNumber();
   if (relayedRemainedAsset > 0) {
     transferTx.addOutputs({
       recipient: relayedAddress,
-      amount: relayedRemainedAsset,
-      assetType: matchedOrder.makerAsset
+      quantity: relayedRemainedAsset,
+      assetType: matchedOrder.makerAsset,
+      shardId: 0
     });
   }
   let amount: number;
   for (const input of inputs) {
-    amount += input.prevOut.amount.value.toNumber();
+    amount += input.prevOut.quantity.value.toNumber();
   }
-  const remainedAsset = amount - order.assetAmountFrom.value.toNumber();
+  const remainedAsset = amount - order.assetQuantityFrom.value.toNumber();
   if (remainedAsset > 0) {
     transferTx.addOutputs({
       recipient: makerAddress,
-      amount: remainedAsset,
-      assetType: matchedOrder.takerAsset
+      quantity: remainedAsset,
+      assetType: matchedOrder.takerAsset,
+      shardId: 0
     });
   }
 
@@ -391,35 +397,20 @@ async function matchAbove(
   transferTx
     .addOrder({
       order: relayedOrder,
-      spentAmount: order.assetAmountTo,
+      spentQuantity: order.assetQuantityTo,
       inputIndices: Array.from(Array(relayedInputs.length).keys()),
       outputIndices: [2]
     })
     .addOrder({
       order,
-      spentAmount: order.assetAmountFrom,
+      spentQuantity: order.assetQuantityFrom,
       inputIndices: Array.from(
         Array(relayedInputs.length + inputs.length).keys()
       ).slice(relayedInputs.length),
       outputIndices: []
     });
   // FIXME - Add fee payment Output
-  const fillParcel = sdk.core.createAssetTransactionParcel({
-    transaction: transferTx
-  });
-  await sdk.rpc.chain.sendParcel(fillParcel, {
-    account: Config["dex-platform-address"],
-    passphrase: Config["dex-passphrase"]
-  });
-
-  const updatedOrder = Order.fromJSON(
-    JSON.parse(JSON.stringify(matchedOrder.order))
-  ).consume(order.assetAmountTo);
-  controllers.orderController.update(parseInt(matchedOrder.id, 10), {
-    amount: updatedOrder.assetAmountFrom,
-    assetList: [transferTx.getTransferredAsset(2).createTransferInput().toJSON],
-    order: updatedOrder
-  });
+  // FIXME - Confirm the transaction and update ramain order
 }
 
 async function matchBelow(
@@ -434,46 +425,50 @@ async function matchBelow(
 ): Promise<{ inputs: AssetTransferInput; order: Order }> {
   // Add asset newely gain
   const transferTx = sdk.core
-    .createAssetTransferTransaction()
+    .createTransferAssetTransaction()
     .addInputs(relayedInputs)
     .addInputs(inputs)
     .addOutputs(
       {
         recipient: relayedAddress,
-        amount: relayedOrder.assetAmountTo,
-        assetType: matchedOrder.takerAsset
+        quantity: relayedOrder.assetQuantityTo,
+        assetType: matchedOrder.takerAsset,
+        shardId: 0
       },
       {
         recipient: makerAddress,
-        amount: relayedOrder.assetAmountFrom,
-        assetType: matchedOrder.makerAsset
+        quantity: relayedOrder.assetQuantityFrom,
+        assetType: matchedOrder.makerAsset,
+        shardId: 0
       }
     );
 
   // Add remain asset
   let relayedAmount: number;
   for (const input of relayedInputs) {
-    relayedAmount += input.prevOut.amount.value.toNumber();
+    relayedAmount += input.prevOut.quantity.value.toNumber();
   }
   const relayedRemainedAsset =
-    relayedAmount - relayedOrder.assetAmountFrom.value.toNumber();
+    relayedAmount - relayedOrder.assetQuantityFrom.value.toNumber();
   if (relayedRemainedAsset > 0) {
     transferTx.addOutputs({
       recipient: relayedAddress,
-      amount: relayedRemainedAsset,
-      assetType: matchedOrder.makerAsset
+      quantity: relayedRemainedAsset,
+      assetType: matchedOrder.makerAsset,
+      shardId: 0
     });
   }
   let amount: number;
   for (const input of inputs) {
-    amount += input.prevOut.amount.value.toNumber();
+    amount += input.prevOut.quantity.value.toNumber();
   }
-  const remainedAsset = amount - relayedOrder.assetAmountTo.value.toNumber();
+  const remainedAsset = amount - relayedOrder.assetQuantityTo.value.toNumber();
   if (remainedAsset > 0) {
     transferTx.addOutputs({
       recipient: makerAddress,
-      amount: remainedAsset,
-      assetType: matchedOrder.takerAsset
+      quantity: remainedAsset,
+      assetType: matchedOrder.takerAsset,
+      shardId: 0
     });
   }
 
@@ -481,13 +476,13 @@ async function matchBelow(
   transferTx
     .addOrder({
       order: relayedOrder,
-      spentAmount: order.assetAmountTo,
+      spentQuantity: order.assetQuantityTo,
       inputIndices: Array.from(Array(relayedInputs.length).keys()),
       outputIndices: []
     })
     .addOrder({
       order,
-      spentAmount: order.assetAmountFrom,
+      spentQuantity: order.assetQuantityFrom,
       inputIndices: Array.from(
         Array(relayedInputs.length + inputs.length).keys()
       ).slice(relayedInputs.length),
@@ -495,20 +490,10 @@ async function matchBelow(
     });
 
   // FIXME - Add fee payment Output
-  const fillParcel = sdk.core.createAssetTransactionParcel({
-    transaction: transferTx
-  });
-  await sdk.rpc.chain.sendParcel(fillParcel, {
-    account: Config["dex-platform-address"],
-    passphrase: Config["dex-passphrase"]
-  });
-
-  await controllers.orderController.destroy(parseInt(matchedOrder.id, 10));
-
-  const updatedOrder = order.consume(relayedOrder.assetAmountTo);
+  // FIXME - Confirm the transaction and return remain amount
 
   return {
-    inputs: transferTx.getTransferredAsset(3).createTransferInput(),
-    order: updatedOrder
+    inputs: null,
+    order: null
   };
 }
