@@ -1,4 +1,8 @@
-import { AssetTransferInput, Order } from "codechain-sdk/lib/core/classes";
+import {
+  AssetTransferInput,
+  Order,
+  TransferAsset
+} from "codechain-sdk/lib/core/classes";
 import { AssetTransferInputJSON } from "codechain-sdk/lib/core/transaction/AssetTransferInput";
 import * as express from "express";
 import { controllers } from "../controllers";
@@ -21,17 +25,6 @@ export default function orderRoute(app: express.Express) {
       .catch(err => res.status(400).send(err));
   });
 
-  app.get("/api/orderbook", (req, res) => {
-    if (req.query.range === undefined) {
-      res.status(400).send("ranage is undefined");
-      return;
-    }
-    engine.orderbook
-      .orderbook(req.query.range)
-      .then(orders => res.status(201).send(orders))
-      .catch(err => res.status(400).send(err.message));
-  });
-
   app.post("/api/order/submit", (req, res) => {
     engine.matching
       .submit(
@@ -39,22 +32,13 @@ export default function orderRoute(app: express.Express) {
           AssetTransferInput.fromJSON(input)
         ),
         Order.fromJSON(req.body.order),
-        req.body.marketId,
-        req.body.makerAddress
+        req.body.makerAddress,
+        // FIX ME - parse TransferAsset
+        req.body.splitTx as TransferAsset
       )
       .then((_: any) => {
         res.status(201).send({ message: "success" });
       })
       .catch((err: any) => res.status(400).send(err.message));
-  });
-
-  app.post("/api/order/userorder", (req, res) => {
-    console.log(req.body.addresses);
-    engine.history
-      .getUserOrder(req.body.addresses)
-      .then(orders => {
-        res.status(201).send(orders);
-      })
-      .catch(err => res.status(400).send(err.message));
   });
 }

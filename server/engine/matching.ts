@@ -1,10 +1,12 @@
 import { H256, U64 } from "codechain-primitives";
 import { SDK } from "codechain-sdk";
-import { AssetOutPoint } from "codechain-sdk/lib/core/transaction/AssetOutPoint";
-import { AssetTransferInput } from "codechain-sdk/lib/core/transaction/AssetTransferInput";
+import {
+  AssetOutPoint,
+  AssetTransferInput,
+  Order,
+  TransferAsset
+} from "codechain-sdk/lib/core/classes";
 import { AssetTransferInputJSON } from "codechain-sdk/lib/core/transaction/AssetTransferInput";
-import { Order } from "codechain-sdk/lib/core/transaction/Order";
-import { TransferAsset } from "codechain-sdk/lib/core/transaction/TransferAsset";
 import { Server } from "../../app";
 import * as Config from "../config/dex.json";
 import { controllers } from "../controllers";
@@ -23,24 +25,21 @@ interface IndexSig {
 export async function submit(
   assetList: AssetTransferInput[],
   order: Order,
-  marketId: number,
   makerAddress: string,
   splitTx?: TransferAsset
-): Promise<void | number> {
+): Promise<void | TransferAsset> {
   let isSplit: boolean = null;
   if (splitTx === null) {
     isSplit = false;
     console.log("splitTx is along with orderTx" + isSplit);
   }
 
-  if (!checkTX(assetList)) {
-    throw Error("Invalid transaction - 0");
-  }
+  const marketId = checkTX(assetList, order, splitTx);
+  const rate = getRate(order, marketId);
 
   const assetTypeFrom: H256 = order.assetTypeFrom;
   const assetTypeTo: H256 = order.assetTypeTo;
   const assetQuantityFrom: number = order.assetQuantityFrom.value.toNumber();
-  const rate = getRate(order, marketId);
 
   if (rate === null) {
     throw Error("Invalid transaction - 1");
@@ -58,7 +57,7 @@ export async function submit(
   );
   // In case that there is no any matched orders
   if (orders.length === 0) {
-    const ins = await controllers.orderController.create(
+    await controllers.orderController.create(
       assetTypeFrom.toEncodeObject().slice(2),
       assetTypeTo.toEncodeObject().slice(2),
       assetQuantityFrom,
@@ -68,39 +67,67 @@ export async function submit(
       JSON.parse(JSON.stringify(order.toJSON())),
       marketId
     );
-    return parseInt(ins.get().id, 10);
+    return null;
   }
 
-  // In case that there are matched orders
-  return await matchOrder(
-    assetList,
-    order,
-    orders,
-    makerAddress,
-    rate,
-    marketId
-  );
+  // FIXME - In case that there are matched orders
+  // FIXME - register UTXO and expiration date to order watcher
+
+  return null;
 }
 
-function checkTX(inputs: AssetTransferInput[]): boolean {
-  // Check if unlock scripts in input is valid
+function checkTX(
+  inputs: AssetTransferInput[],
+  order: Order,
+  splitTx?: TransferAsset
+): number {
+  // FIXME - Check if unlock scripts in inputs of the orderTx are valid
   if (!executeScript(inputs)) {
     throw { message: "tx is not valid" };
   }
+  // FIXME - Check if unlock scripts in inputs of the spliTx are valid
+  // FIXME - check if a fee is properly paid
+  // FIXME - check if orderTx meat the orderInfo
+  checkOrderTx(inputs, order);
+  // FIXME - check if splitTx properly supports the orderTx
+
   // Get UTXO list
   const utxo: AssetOutPoint[] = [];
   for (const input of inputs) {
     utxo.push(input.prevOut);
   }
 
+  // Check if the market ID is valid
+  return checkMarket(order);
+}
+
+function checkOrderTx(inputs: AssetTransferInput[], order: Order): void {
   // FIXME - check if UTXOs are the same asset type
-  // FIXME - check if UTXOs really exist
   // FIXME - check If UTXOs is the same with orgin output of the order
   // FIXME - check if UTXOs have enought amount to pay order
   // FIXME - check pubkey hash is standard script
-  // FIXME - register UTXO and expiration date to order watcher
-  // FIXME - check if a fee is properly paid
-  return true;
+
+  console.log("Not implemented");
+}
+
+function checkMarket(order: Order): number {
+  const assetTypeFrom: H256 = order.assetTypeFrom;
+  const assetTypeTo: H256 = order.assetTypeTo;
+
+  // Check if the market ID is valid
+  Object.keys(Config.market).forEach(key => {
+    const marketInfo = (Config.market as IndexSig)[key];
+    if (marketInfo.asset1 === assetTypeFrom.toJSON()) {
+      if (marketInfo.asset2 === assetTypeTo.toJSON()) {
+        return marketInfo.id;
+      }
+    } else if (marketInfo.asset1 === assetTypeTo.toJSON()) {
+      if (marketInfo.asset2 === assetTypeFrom.toJSON()) {
+        return marketInfo.id;
+      }
+    }
+  });
+  throw { message: "Invalid market" };
 }
 
 function getRate(order: Order, marketId: number): number | null {
@@ -109,7 +136,7 @@ function getRate(order: Order, marketId: number): number | null {
   const assetQuantityFrom: U64 = order.assetQuantityFrom;
   const assetQuantityTo: U64 = order.assetQuantityTo;
 
-  // Check if the market ID is valid
+  // Get market information
   let marketConfig: { id: number; asset1: string; asset2: string };
   Object.keys(Config.market).forEach(key => {
     if ((Config.market as IndexSig)[key].id === marketId) {
@@ -117,11 +144,11 @@ function getRate(order: Order, marketId: number): number | null {
     }
   });
   if (marketConfig === undefined) {
-    return null;
+    throw { message: "Invalid marketId" };
   }
 
   // Check if the targeted asset types is valid and get a rate between them
-  let rate;
+  let rate: number;
   if (
     marketConfig.asset1 === assetTypeFrom.toEncodeObject().slice(2) &&
     marketConfig.asset2 === assetTypeTo.toEncodeObject().slice(2)
@@ -133,7 +160,7 @@ function getRate(order: Order, marketId: number): number | null {
   ) {
     rate = assetQuantityFrom.value.dividedBy(assetQuantityTo.value).toNumber();
   } else {
-    return null;
+    throw { message: "OrderInfo has invalid asset types" };
   }
 
   return rate;
