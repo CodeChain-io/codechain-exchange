@@ -4,13 +4,15 @@ import {
   AssetOutPoint,
   AssetTransferInput,
   Order,
-  TransferAsset
+  TransferAsset,
+  SignedTransaction
 } from "codechain-sdk/lib/core/classes";
 import { AssetTransferInputJSON } from "codechain-sdk/lib/core/transaction/AssetTransferInput";
 import { Server } from "../../app";
 import * as Config from "../config/dex.json";
 import { controllers } from "../controllers";
 import { OrderAttriubutes, OrderInstance } from "../models/order";
+import { SignedTransactionJSON } from "codechain-sdk/lib/core/SignedTransaction";
 
 // FIXME - use codechain RPC
 function executeScript(_: AssetTransferInput[]): boolean {
@@ -26,8 +28,8 @@ export async function submit(
   assetList: AssetTransferInput[],
   order: Order,
   makerAddress: string,
-  splitTx?: TransferAsset
-): Promise<void | TransferAsset> {
+  splitTx?: SignedTransaction
+): Promise<void | SignedTransactionJSON> {
   let isSplit: boolean = null;
   if (splitTx === null) {
     isSplit = false;
@@ -79,7 +81,7 @@ export async function submit(
 function checkTX(
   inputs: AssetTransferInput[],
   order: Order,
-  splitTx?: TransferAsset
+  splitTx?: SignedTransaction
 ): number {
   // FIXME - Check if unlock scripts in inputs of the orderTx are valid
   if (!executeScript(inputs)) {
@@ -212,9 +214,9 @@ async function matchOrder(
     }
     if (
       relayedOrder.assetTypeFrom.toEncodeObject().slice(2) !==
-        matchedOrder.makerAsset ||
+      matchedOrder.makerAsset ||
       relayedOrder.assetTypeTo.toEncodeObject().slice(2) !==
-        matchedOrder.takerAsset
+      matchedOrder.takerAsset
     ) {
       throw Error("Order is broken - 1");
     }
