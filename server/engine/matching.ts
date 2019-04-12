@@ -4,21 +4,15 @@ import {
   AssetOutPoint,
   AssetTransferInput,
   Order,
-  TransferAsset,
-  SignedTransaction
+  SignedTransaction,
+  TransferAsset
 } from "codechain-sdk/lib/core/classes";
+import { SignedTransactionJSON } from "codechain-sdk/lib/core/SignedTransaction";
 import { AssetTransferInputJSON } from "codechain-sdk/lib/core/transaction/AssetTransferInput";
 import { Server } from "../../app";
 import * as Config from "../config/dex.json";
 import { controllers } from "../controllers";
 import { OrderAttriubutes, OrderInstance } from "../models/order";
-import { SignedTransactionJSON } from "codechain-sdk/lib/core/SignedTransaction";
-
-// FIXME - use codechain RPC
-function executeScript(_: AssetTransferInput[]): boolean {
-  console.log("Not implemented");
-  return true;
-}
 
 interface IndexSig {
   [key: string]: { id: number; asset1: string; asset2: string };
@@ -48,8 +42,8 @@ export async function submit(
   }
 
   const orders = await controllers.orderController.find(
-    assetTypeTo.toEncodeObject().slice(2),
-    assetTypeFrom.toEncodeObject().slice(2),
+    assetTypeTo.toJSON(),
+    assetTypeFrom.toJSON(),
     null,
     rate,
     null,
@@ -60,8 +54,8 @@ export async function submit(
   // In case that there is no any matched orders
   if (orders.length === 0) {
     await controllers.orderController.create(
-      assetTypeFrom.toEncodeObject().slice(2),
-      assetTypeTo.toEncodeObject().slice(2),
+      assetTypeFrom.toJSON(),
+      assetTypeTo.toJSON(),
       assetQuantityFrom,
       rate,
       makerAddress,
@@ -101,6 +95,12 @@ function checkTX(
 
   // Check if the market ID is valid
   return checkMarket(order);
+}
+
+// FIXME - use codechain RPC
+function executeScript(_: AssetTransferInput[]): boolean {
+  console.log("Not implemented");
+  return true;
 }
 
 function checkOrderTx(inputs: AssetTransferInput[], order: Order): void {
@@ -214,9 +214,9 @@ async function matchOrder(
     }
     if (
       relayedOrder.assetTypeFrom.toEncodeObject().slice(2) !==
-      matchedOrder.makerAsset ||
+        matchedOrder.makerAsset ||
       relayedOrder.assetTypeTo.toEncodeObject().slice(2) !==
-      matchedOrder.takerAsset
+        matchedOrder.takerAsset
     ) {
       throw Error("Order is broken - 1");
     }

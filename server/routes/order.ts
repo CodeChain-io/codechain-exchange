@@ -1,11 +1,11 @@
 import {
   AssetTransferInput,
   Order,
-  TransferAsset,
-  SignedTransaction
+  SignedTransaction,
+  TransferAsset
 } from "codechain-sdk/lib/core/classes";
 import { AssetTransferInputJSON } from "codechain-sdk/lib/core/transaction/AssetTransferInput";
-import { fromJSONToSignedTransaction } from "codechain-sdk/lib/core/transaction/json"
+import { fromJSONToSignedTransaction } from "codechain-sdk/lib/core/transaction/json";
 import * as express from "express";
 import { controllers } from "../controllers";
 import { engine } from "../engine";
@@ -34,30 +34,25 @@ export default function orderRoute(app: express.Express) {
       let makerAddress: string;
       let splitTx: SignedTransaction;
       try {
-        assetList = (req.body.assetList as AssetTransferInputJSON[]).map(input =>
-          AssetTransferInput.fromJSON(input)
-        )
-        order = Order.fromJSON(req.body.order)
-        makerAddress = req.body.makerAddress
-        splitTx = req.body.splitTx ? fromJSONToSignedTransaction(req.body.splitTx) : null
+        assetList = (req.body.assetList as AssetTransferInputJSON[]).map(
+          input => AssetTransferInput.fromJSON(input)
+        );
+        order = Order.fromJSON(req.body.order);
+        makerAddress = req.body.makerAddress;
+        splitTx = req.body.splitTx
+          ? fromJSONToSignedTransaction(req.body.splitTx)
+          : null;
       } catch (error) {
-        throw Error("Fail to parse arguments")
+        throw Error("Fail to parse arguments");
       }
 
       engine.matching
-        .submit(
-          assetList,
-          order,
-          makerAddress,
-          splitTx
-        )
+        .submit(assetList, order, makerAddress, splitTx)
         .then((_: any) => {
           res.status(201).send({ message: "success" });
-        })
-
+        });
     } catch (error) {
-      res.status(400).send(error.message)
+      res.status(400).send(error.message);
     }
-
   });
 }
