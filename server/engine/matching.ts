@@ -30,7 +30,7 @@ export async function submit(
     console.log("splitTx is along with orderTx" + isSplit);
   }
 
-  const marketId = checkTX(assetList, order, splitTx);
+  const marketId = checkTX(assetList, order, isSplit, splitTx);
   const rate = getRate(order, marketId);
 
   const assetTypeFrom: H256 = order.assetTypeFrom;
@@ -75,13 +75,23 @@ export async function submit(
 function checkTX(
   inputs: AssetTransferInput[],
   order: Order,
+  isSplit: boolean,
   splitTx?: SignedTransaction
 ): number {
   // FIXME - Check if unlock scripts in inputs of the orderTx are valid
   if (!executeScript(inputs)) {
-    throw { message: "tx is not valid" };
+    throw { message: "Unlock scripts in order transaction are not valid" };
   }
-  // FIXME - Check if unlock scripts in inputs of the spliTx are valid
+  // FIXME - Check if splitTx is assetTransferTransaction and unlock scripts in inputs of the it are valid
+  if (isSplit) {
+    if (splitTx.unsigned.type() === "transferAsset") {
+      if (!executeScript((splitTx.unsigned as TransferAsset).inputs())) {
+        throw Error("Unlock scripts in split transaction are not valid");
+      }
+    } else {
+      throw Error("Split transaction is not assetTransferTransaction");
+    }
+  }
   // FIXME - check if a fee is properly paid
   // FIXME - check if orderTx meat the orderInfo
   checkOrderTx(inputs, order);
