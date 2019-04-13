@@ -10,17 +10,12 @@ const env = process.env.NODE_ENV || "development";
 const config = require(`${__dirname}/../config/config.json`)[env];
 const db: any = {};
 
-let sequelize: any;
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable]);
-} else {
-  sequelize = new Sequelize(
-    config.database,
-    config.username,
-    config.password,
-    config
-  );
-}
+const sequelize = new Sequelize.Sequelize(
+  config.database,
+  config.username,
+  config.password,
+  config
+);
 
 fs.readdirSync(__dirname)
   .filter(
@@ -39,7 +34,7 @@ Object.keys(db).forEach(modelName => {
 });
 
 db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+db.Sequelize = sequelize;
 
 interface Model {
   sequelize: Sequelize.Sequelize;
