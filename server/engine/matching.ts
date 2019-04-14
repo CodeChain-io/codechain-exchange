@@ -204,7 +204,7 @@ async function matchOrder(
         marketId
       );
 
-      return parseInt(ins.get('id'), 10);
+      return parseInt(ins.get("id"), 10);
     }
 
     const matchedOrder = matchedOrderAux.get();
@@ -224,9 +224,9 @@ async function matchOrder(
     }
     if (
       relayedOrder.assetTypeFrom.toEncodeObject().slice(2) !==
-      matchedOrder.makerAsset ||
+        matchedOrder.makerAsset ||
       relayedOrder.assetTypeTo.toEncodeObject().slice(2) !==
-      matchedOrder.takerAsset
+        matchedOrder.takerAsset
     ) {
       throw Error("Order is broken - 1");
     }
