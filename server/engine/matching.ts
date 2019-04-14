@@ -1,7 +1,6 @@
 import { H256, U64 } from "codechain-primitives";
 import { SDK } from "codechain-sdk";
 import {
-  AssetOutPoint,
   AssetTransferInput,
   Order,
   SignedTransaction,
@@ -14,7 +13,9 @@ import * as Config from "../config/dex.json";
 import { controllers } from "../controllers";
 import { OrderAttriubutes, OrderInstance } from "../models/order";
 
-interface IndexSig {
+const sdk = new SDK({ server: Server.chain });
+
+interface MarketIndexSig {
   [key: string]: { id: number; asset1: string; asset2: string };
 }
 
@@ -30,10 +31,13 @@ export async function submit(
     console.log("splitTx is along with orderTx" + isSplit);
   }
 
-  const marketId = checkTX(assetList, order, isSplit, splitTx);
+  const assetTypeFrom: H256 = order.assetTypeFrom;
+  const isFeePayingOrder: boolean = assetTypeFrom.toJSON() === Config["fee-asset-type"] ? true : false;
+
+  const marketId = checkTX(assetList, order, isSplit, isFeePayingOrder, splitTx);
   const rate = getRate(order, marketId);
 
-  const assetTypeFrom: H256 = order.assetTypeFrom;
+
   const assetTypeTo: H256 = order.assetTypeTo;
   const assetQuantityFrom: number = order.assetQuantityFrom.value.toNumber();
 
@@ -76,14 +80,17 @@ function checkTX(
   inputs: AssetTransferInput[],
   order: Order,
   isSplit: boolean,
+  isFeePayingOrder: boolean,
   splitTx?: SignedTransaction
 ): number {
-  // FIXME - Check if unlock scripts in inputs of the orderTx are valid
-  if (!executeScript(inputs)) {
+  // Check if unlock scripts in inputs of the orderTx are valid
+  if (!executeScript(inputs, splitTx)) {
     throw { message: "Unlock scripts in order transaction are not valid" };
   }
-  // FIXME - Check if splitTx is assetTransferTransaction and unlock scripts in inputs of the it are valid
+
+
   if (isSplit) {
+    // Check if splitTx is assetTransferTransaction and unlock scripts in inputs of the it are valid
     if (splitTx.unsigned.type() === "transferAsset") {
       if (!executeScript((splitTx.unsigned as TransferAsset).inputs())) {
         throw Error("Unlock scripts in split transaction are not valid");
@@ -91,35 +98,72 @@ function checkTX(
     } else {
       throw Error("Split transaction is not assetTransferTransaction");
     }
-  }
-  // FIXME - check if a fee is properly paid
-  // FIXME - check if orderTx meat the orderInfo
-  checkOrderTx(inputs, order);
-  // FIXME - check if splitTx properly supports the orderTx
 
-  // Get UTXO list
-  const utxo: AssetOutPoint[] = [];
-  for (const input of inputs) {
-    utxo.push(input.prevOut);
+    // Check if splitTx properly supports the orderTx
+    for (const input of inputs) {
+      const index = input.prevOut.index;
+      const quantity = input.prevOut.quantity;
+
+      try {
+        if ((splitTx.unsigned as TransferAsset).output(index).quantity !== quantity) {
+          throw Error
+        }
+      } catch (error) {
+        throw Error("splitTx can not support the orderTx")
+      }
+    }
   }
+
+  // Check if a fee is properly paid
+  if (isFeePayingOrder) {
+    if (order.assetTypeFee.toJSON() !== Config["fee-asset-type"]) {
+      throw Error("assetTypeFee is incorrect")
+    }
+    if (!order.assetQuantityFee.isGreaterThanOrEqualTo(order.assetQuantityFrom.idiv(0.25))) {
+      throw Error("assetQuantityFee is incorrect")
+    }
+  }
+  // check if orderTx meat the orderInfo
+  checkOrderTx(inputs, order);
 
   // Check if the market ID is valid
   return checkMarket(order);
 }
 
 // FIXME - use codechain RPC
-function executeScript(_: AssetTransferInput[]): boolean {
-  console.log("Not implemented");
+function executeScript(inputs: AssetTransferInput[], splitTx?: SignedTransaction): boolean {
+  if (splitTx) {
+    const parameters = new Array();
+    for (const input of inputs) {
+      parameters.push((splitTx.unsigned as TransferAsset).output(input.prevOut.index).parameters)
+    }
+  } else {
+    console.log("Not impleented")
+  }
   return true;
 }
 
 function checkOrderTx(inputs: AssetTransferInput[], order: Order): void {
-  // FIXME - check if UTXOs are the same asset type
-  // FIXME - check If UTXOs is the same with orgin output of the order
-  // FIXME - check if UTXOs have enought amount to pay order
-  // FIXME - check pubkey hash is standard script
+  const amount: U64 = new U64(0);
+  for (const input of inputs) {
+    amount.plus(input.prevOut.quantity)
 
-  console.log("Not implemented");
+    // check if UTXOs are the same asset type
+    if (!input.prevOut.assetType.isEqualTo(order.assetTypeFrom)) {
+      throw Error("inputs of orderTx are not valid")
+    }
+
+    // check If UTXOs is the same with orgin output of the order
+    if (order.originOutputs.indexOf(input.prevOut) === -1) {
+      throw Error("inputs of orderTx are not valid")
+    }
+  }
+  // Check if there is sufficient amount of asset
+  if (amount.isLessThan(order.assetQuantityFee.plus(order.assetQuantityFrom))) {
+    throw Error("inputs are not sufficient for paying order")
+  }
+
+  // FIXME - check pubkey hash is standard script
 }
 
 function checkMarket(order: Order): number {
@@ -128,7 +172,7 @@ function checkMarket(order: Order): number {
 
   // Check if the market ID is valid
   Object.keys(Config.market).forEach(key => {
-    const marketInfo = (Config.market as IndexSig)[key];
+    const marketInfo = (Config.market as MarketIndexSig)[key];
     if (marketInfo.asset1 === assetTypeFrom.toJSON()) {
       if (marketInfo.asset2 === assetTypeTo.toJSON()) {
         return marketInfo.id;
@@ -151,8 +195,8 @@ function getRate(order: Order, marketId: number): number | null {
   // Get market information
   let marketConfig: { id: number; asset1: string; asset2: string };
   Object.keys(Config.market).forEach(key => {
-    if ((Config.market as IndexSig)[key].id === marketId) {
-      marketConfig = (Config.market as IndexSig)[key];
+    if ((Config.market as MarketIndexSig)[key].id === marketId) {
+      marketConfig = (Config.market as MarketIndexSig)[key];
     }
   });
   if (marketConfig === undefined) {
@@ -186,7 +230,6 @@ async function matchOrder(
   rate: number,
   marketId: number
 ): Promise<void | number> {
-  const sdk = new SDK({ server: Server.chain });
   let inputs: AssetTransferInput[] = incomingInputs;
   let order: Order = incomingOrder;
 
@@ -224,9 +267,9 @@ async function matchOrder(
     }
     if (
       relayedOrder.assetTypeFrom.toEncodeObject().slice(2) !==
-        matchedOrder.makerAsset ||
+      matchedOrder.makerAsset ||
       relayedOrder.assetTypeTo.toEncodeObject().slice(2) !==
-        matchedOrder.takerAsset
+      matchedOrder.takerAsset
     ) {
       throw Error("Order is broken - 1");
     }
@@ -249,7 +292,6 @@ async function matchOrder(
     // In case that matched order is fully filled
     if (remained === order.assetQuantityTo.value.toNumber()) {
       await matchSame(
-        sdk,
         relayedInputs,
         inputs,
         relayedAddress,
@@ -263,7 +305,6 @@ async function matchOrder(
     // In case that matched order is partially filled
     else if (remained > order.assetQuantityTo.value.toNumber()) {
       await matchAbove(
-        sdk,
         relayedInputs,
         inputs,
         relayedAddress,
@@ -277,7 +318,6 @@ async function matchOrder(
     // In case that matched order is fully filled and there is a remain amount in a incoming order
     else {
       const updated = await matchBelow(
-        sdk,
         relayedInputs,
         inputs,
         relayedAddress,
@@ -293,7 +333,6 @@ async function matchOrder(
 }
 
 async function matchSame(
-  sdk: SDK,
   relayedInputs: AssetTransferInput[],
   inputs: AssetTransferInput[],
   relayedAddress: string,
@@ -374,7 +413,6 @@ async function matchSame(
 }
 
 async function matchAbove(
-  sdk: SDK,
   relayedInputs: AssetTransferInput[],
   inputs: AssetTransferInput[],
   relayedAddress: string,
@@ -453,7 +491,6 @@ async function matchAbove(
 }
 
 async function matchBelow(
-  sdk: SDK,
   relayedInputs: AssetTransferInput[],
   inputs: AssetTransferInput[],
   relayedAddress: string,
