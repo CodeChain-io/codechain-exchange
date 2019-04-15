@@ -692,22 +692,6 @@ codechain-primitives@^0.3.0:
     ripemd160 "^2.0.2"
     rlp "^2.1.0"
 
-codechain-primitives@^0.4.4:
-  version "0.4.8"
-  resolved "https://registry.yarnpkg.com/codechain-primitives/-/codechain-primitives-0.4.8.tgz#5206ebcf92c0d225924931493b05c384d48fc63e"
-  integrity sha512-yEPinaK3y0pdMgmp7EjYkru2FL0XjXZ6sjdT4KmlGchqEuLUJsZ3V+MOyGlumdW7TSR7gpHl5+szyRPxUndMrQ==
-  dependencies:
-    bignumber.js "^7.2.1"
-    blakejs "^1.1.0"
-    bn.js "^4.11.8"
-    buffer "^5.2.1"
-    elliptic "^6.4.1"
-    hmac-drbg "^1.0.1"
-    lodash "^4.17.11"
-    node-forge "^0.7.6"
-    ripemd160 "^2.0.2"
-    rlp "^2.1.0"
-
 codechain-primitives@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/codechain-primitives/-/codechain-primitives-1.0.0.tgz#adb8d5e2270a2be2054f2f3d89dd75779de45b04"

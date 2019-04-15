@@ -1,8 +1,7 @@
 import {
   AssetTransferInput,
   Order,
-  SignedTransaction,
-  TransferAsset
+  SignedTransaction
 } from "codechain-sdk/lib/core/classes";
 import { AssetTransferInputJSON } from "codechain-sdk/lib/core/transaction/AssetTransferInput";
 import { fromJSONToSignedTransaction } from "codechain-sdk/lib/core/transaction/json";
@@ -11,7 +10,7 @@ import { controllers } from "../controllers";
 import { engine } from "../engine";
 
 export default function orderRoute(app: express.Express) {
-  app.get("/api/order/find", (req, res) => {
+  app.get("/api/order", (req, res) => {
     controllers.orderController
       .find(
         req.query.makerAsset,
@@ -19,6 +18,7 @@ export default function orderRoute(app: express.Express) {
         req.query.amount,
         req.query.rate,
         req.query.makerAddress,
+        null,
         null,
         null,
         req.query.marketId

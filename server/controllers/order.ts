@@ -9,6 +9,7 @@ export async function create(
   makerAddress: string,
   assetList: JSON,
   order: JSON,
+  splitTx: JSON,
   marketId: number
 ): Promise<OrderInstance> {
   return db.Order.create({
@@ -19,6 +20,7 @@ export async function create(
     makerAddress,
     assetList,
     order,
+    splitTx,
     marketId
   });
 }
@@ -31,6 +33,7 @@ export async function find(
   makerAddress?: string,
   assetList?: JSON,
   order?: JSON,
+  splitTx?: JSON,
   marketId?: number
 ): Promise<OrderInstance[]> {
   const where = {
@@ -41,6 +44,7 @@ export async function find(
     makerAddress,
     assetList,
     order,
+    splitTx,
     marketId
   };
   for (const o in where) {

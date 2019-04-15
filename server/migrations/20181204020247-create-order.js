@@ -40,6 +40,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER
       },
+      splitTx: {
+        allowNull: true,
+        type: Sequelize.JSON
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

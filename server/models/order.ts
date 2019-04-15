@@ -9,6 +9,7 @@ export interface OrderAttriubutes {
   makerAddress: string;
   assetList: JSON;
   order: JSON;
+  splitTx: JSON;
   marketId: number;
   createdAt?: string;
   updatedAt?: string;
@@ -34,8 +35,7 @@ export default (
       order: DataTypes.JSON,
       // SplitTx
       splitTx: DataTypes.JSON,
-      marketId: DataTypes.INTEGER,
-      semaphores: DataTypes.BOOLEAN
+      marketId: DataTypes.INTEGER
     },
     {}
   );
