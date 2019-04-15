@@ -1,10 +1,10 @@
 import {
   AssetTransferInput,
   Order,
-  SignedTransaction
+  Transaction
 } from "codechain-sdk/lib/core/classes";
 import { AssetTransferInputJSON } from "codechain-sdk/lib/core/transaction/AssetTransferInput";
-import { fromJSONToSignedTransaction } from "codechain-sdk/lib/core/transaction/json";
+import { fromJSONToTransaction } from "codechain-sdk/lib/core/transaction/json";
 import * as express from "express";
 import { controllers } from "../controllers";
 import { engine } from "../engine";
@@ -32,7 +32,7 @@ export default function orderRoute(app: express.Express) {
       let assetList: AssetTransferInput[];
       let order: Order;
       let makerAddress: string;
-      let splitTx: SignedTransaction;
+      let splitTx: Transaction;
       try {
         assetList = (req.body.assetList as AssetTransferInputJSON[]).map(
           input => AssetTransferInput.fromJSON(input)
@@ -40,7 +40,7 @@ export default function orderRoute(app: express.Express) {
         order = Order.fromJSON(req.body.order);
         makerAddress = req.body.makerAddress;
         splitTx = req.body.splitTx
-          ? fromJSONToSignedTransaction(req.body.splitTx)
+          ? fromJSONToTransaction(req.body.splitTx)
           : null;
       } catch (error) {
         throw Error("Fail to parse arguments");

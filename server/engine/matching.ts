@@ -20,6 +20,7 @@ const sdk = new SDK({ server: Server });
 const platformAddress = Config["dex-platform-address"];
 const assetAddress = Config["dex-asset-address"];
 const passpharase = Config["dex-passphrase"];
+const FEE_RATE = Config["fee-rate"];
 
 interface MarketIndexSig {
   [key: string]: { id: number; asset1: string; asset2: string };
@@ -100,7 +101,7 @@ export async function submit(
   }
 
   // In case that there are matched orders
-  matchOrder(
+  await matchOrder(
     assetList,
     order,
     orders,
@@ -143,10 +144,7 @@ function checkTX(
       const quantity = input.prevOut.quantity;
 
       try {
-        if (
-          (splitTx as TransferAsset).output(index).quantity !==
-          quantity
-        ) {
+        if ((splitTx as TransferAsset).output(index).quantity !== quantity) {
           throw Error;
         }
       } catch (error) {
@@ -162,7 +160,7 @@ function checkTX(
     }
     if (
       !order.assetQuantityFee.isGreaterThanOrEqualTo(
-        order.assetQuantityFrom.idiv(0.25)
+        order.assetQuantityFrom.times(FEE_RATE)
       )
     ) {
       throw Error("assetQuantityFee is incorrect");
@@ -184,8 +182,7 @@ function executeScript(
     const parameters = new Array();
     for (const input of inputs) {
       parameters.push(
-        (splitTx as TransferAsset).output(input.prevOut.index)
-          .parameters
+        (splitTx as TransferAsset).output(input.prevOut.index).parameters
       );
     }
   } else {
@@ -346,9 +343,9 @@ async function matchOrder(
       throw Error("Order is broken - 0");
     }
     if (
-      relayedOrder.assetTypeFrom.toEncodeObject().slice(2) !==
+      relayedOrder.assetTypeFrom.toJSON() !==
       matchedOrder.makerAsset ||
-      relayedOrder.assetTypeTo.toEncodeObject().slice(2) !==
+      relayedOrder.assetTypeTo.toJSON() !==
       matchedOrder.takerAsset
     ) {
       throw Error("Order is broken - 1");
@@ -453,8 +450,11 @@ async function matchSame(
   for (const input of relayedInputs) {
     relayedAmount += input.prevOut.quantity.value.toNumber();
   }
-  const relayedRemainedAsset =
-    relayedAmount - relayedOrder.assetQuantityFrom.value.toNumber();
+  const relayedRemainedAsset = isFeePayingOrder
+    ? relayedAmount - relayedOrder.assetQuantityFrom.value.toNumber()
+    : relayedAmount -
+    relayedOrder.assetQuantityFrom.value.toNumber() -
+    relayedOrder.assetQuantityFee.value.toNumber();
   if (relayedRemainedAsset > 0) {
     transferTx.addOutputs({
       recipient: relayedOrderAddress,
@@ -467,7 +467,11 @@ async function matchSame(
   for (const input of incomingInputs) {
     amount += input.prevOut.quantity.value.toNumber();
   }
-  const remainedAsset = amount - relayedOrder.assetQuantityTo.value.toNumber();
+  const remainedAsset = isFeePayingOrder
+    ? amount -
+    incomingOrder.assetQuantityFrom.value.toNumber() -
+    incomingOrder.assetQuantityFee.value.toNumber()
+    : amount - incomingOrder.assetQuantityTo.value.toNumber();
   if (remainedAsset > 0) {
     transferTx.addOutputs({
       recipient: incomingOrderAddress,
@@ -500,7 +504,7 @@ async function matchSame(
       order: relayedOrder,
       spentQuantity: relayedOrder.assetQuantityFrom,
       inputIndices: _.range(relayedInputs.length),
-      outputIndices: [0, 2]
+      outputIndices: isFeePayingOrder ? [0, 2] : [0, 2, 4]
     })
     .addOrder({
       order: incomingOrder,
@@ -508,7 +512,7 @@ async function matchSame(
       inputIndices: _.range(relayedInputs.length + incomingInputs.length).slice(
         relayedInputs.length
       ),
-      outputIndices: [1, 3]
+      outputIndices: isFeePayingOrder ? [1, 3, 4] : [1, 3]
     });
 
   // FIXME - Confirm the splitTx if exists
