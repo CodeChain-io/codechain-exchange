@@ -21,6 +21,7 @@ const platformAddress = Config["dex-platform-address"];
 const assetAddress = Config["dex-asset-address"];
 const passpharase = Config["dex-passphrase"];
 const FEE_RATE = Config["fee-rate"];
+const FEE_ASSET_TYPE = Config["fee-asset-type"];
 
 interface MarketIndexSig {
   [key: string]: { id: number; asset1: string; asset2: string };
@@ -40,7 +41,7 @@ export async function submit(
 
   const assetTypeFrom: H256 = order.assetTypeFrom;
   const isFeePayingOrder: boolean =
-    assetTypeFrom.toJSON() === Config["fee-asset-type"] ? true : false;
+    assetTypeFrom.toJSON() === FEE_ASSET_TYPE ? true : false;
 
   const marketId = checkTX(
     assetList,
@@ -155,7 +156,7 @@ function checkTX(
 
   // Check if a fee is properly paid
   if (isFeePayingOrder) {
-    if (order.assetTypeFee.toJSON() !== Config["fee-asset-type"]) {
+    if (order.assetTypeFee.toJSON() !== FEE_ASSET_TYPE) {
       throw Error("assetTypeFee is incorrect");
     }
     if (
@@ -250,7 +251,7 @@ function getRate(order: Order, marketId: number): number | null {
 
   // If not production mode
   if (marketId === 0) {
-    if (assetTypeFrom.toJSON() === Config["fee-asset-type"]) {
+    if (assetTypeFrom.toJSON() === FEE_ASSET_TYPE) {
       return assetQuantityTo.value
         .dividedBy(assetQuantityFrom.value)
         .toNumber();
@@ -343,10 +344,8 @@ async function matchOrder(
       throw Error("Order is broken - 0");
     }
     if (
-      relayedOrder.assetTypeFrom.toJSON() !==
-      matchedOrder.makerAsset ||
-      relayedOrder.assetTypeTo.toJSON() !==
-      matchedOrder.takerAsset
+      relayedOrder.assetTypeFrom.toJSON() !== matchedOrder.makerAsset ||
+      relayedOrder.assetTypeTo.toJSON() !== matchedOrder.takerAsset
     ) {
       throw Error("Order is broken - 1");
     }
@@ -453,8 +452,8 @@ async function matchSame(
   const relayedRemainedAsset = isFeePayingOrder
     ? relayedAmount - relayedOrder.assetQuantityFrom.value.toNumber()
     : relayedAmount -
-    relayedOrder.assetQuantityFrom.value.toNumber() -
-    relayedOrder.assetQuantityFee.value.toNumber();
+      relayedOrder.assetQuantityFrom.value.toNumber() -
+      relayedOrder.assetQuantityFee.value.toNumber();
   if (relayedRemainedAsset > 0) {
     transferTx.addOutputs({
       recipient: relayedOrderAddress,
@@ -469,8 +468,8 @@ async function matchSame(
   }
   const remainedAsset = isFeePayingOrder
     ? amount -
-    incomingOrder.assetQuantityFrom.value.toNumber() -
-    incomingOrder.assetQuantityFee.value.toNumber()
+      incomingOrder.assetQuantityFrom.value.toNumber() -
+      incomingOrder.assetQuantityFee.value.toNumber()
     : amount - incomingOrder.assetQuantityTo.value.toNumber();
   if (remainedAsset > 0) {
     transferTx.addOutputs({

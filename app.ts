@@ -9,7 +9,6 @@ export const env = process.env.NODE_ENV || "development";
 export const Server = require(`${__dirname}/server/config/dex.json`).node[
   env
 ].rpc;
-console.log(Server);
 
 // Set up the express app
 const app = express();
