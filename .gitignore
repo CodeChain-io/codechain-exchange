@@ -1,10 +1,9 @@
 .DS_Store
 node_modules
 /dist
-./client/node_modules
-./client/dist/*
 /log
 keystore.db
+server/config/*
 
 # local env files
 .env.local
