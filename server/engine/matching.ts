@@ -11,14 +11,15 @@ import { SignedTransactionJSON } from "codechain-sdk/lib/core/SignedTransaction"
 import { AssetTransferInputJSON } from "codechain-sdk/lib/core/transaction/AssetTransferInput";
 import { fromJSONToSignedTransaction } from "codechain-sdk/lib/core/transaction/json";
 import * as _ from "lodash";
-import { env, Server } from "../../app";
 import * as Config from "../config/dex.json";
 import { controllers } from "../controllers";
 import { OrderAttriubutes, OrderInstance } from "../models/order";
 
-const sdk = new SDK({ server: Server });
-const platformAddress = Config["dex-platform-address"];
-const assetAddress = Config["dex-asset-address"];
+const env: string = process.env.NODE_ENV || "development";
+const rpcServer: string = require("../config/dex.json").node[env].rpc;
+const sdk = new SDK({ server: rpcServer });
+const DEX_PLATFORM_ADDRESS = Config["dex-platform-address"];
+const DEX_ASSET_ADDRESS = Config["dex-asset-address"];
 const passpharase = Config["dex-passphrase"];
 const FEE_RATE = Config["fee-rate"];
 const FEE_ASSET_TYPE = Config["fee-asset-type"];
@@ -27,6 +28,7 @@ interface MarketIndexSig {
   [key: string]: { id: number; asset1: string; asset2: string };
 }
 
+// FIXME - Make do not get makerAddress instead find it in the order
 export async function submit(
   assetList: AssetTransferInput[],
   order: Order,
@@ -109,7 +111,7 @@ export async function submit(
     makerAddress,
     rate,
     marketId,
-    isFeePayingOrder,
+    true, // FIXME - TEMP
     splitTx
   );
   // FIXME - register UTXO and expiration date to order watcher
@@ -198,9 +200,10 @@ function checkOrderTx(inputs: AssetTransferInput[], order: Order): void {
     amount = amount.plus(input.prevOut.quantity);
 
     // check if UTXOs are the same asset type
+    /* FIXME - TEMP
     if (!input.prevOut.assetType.isEqualTo(order.assetTypeFrom)) {
       throw Error("inputs of orderTx are not valid");
-    }
+    }*/
 
     // check If UTXOs is the same with orgin output of the order
     if (order.originOutputs.indexOf(input.prevOut) === -1) {
@@ -208,15 +211,14 @@ function checkOrderTx(inputs: AssetTransferInput[], order: Order): void {
     }
   }
   // Check if there is sufficient amount of asset
+  /* FIXME -TEMP
   if (amount.isLessThan(order.assetQuantityFee.plus(order.assetQuantityFrom))) {
     throw Error(
       `inputs are not sufficient for paying order ${amount} ${order.assetQuantityFee.plus(
         order.assetQuantityFrom
       )}`
     );
-  }
-
-  // FIXME - check pubkey hash is standard script
+  }*/
 }
 
 function checkMarket(order: Order): number {
@@ -249,7 +251,8 @@ function getRate(order: Order, marketId: number): number | null {
   const assetQuantityFrom: U64 = order.assetQuantityFrom;
   const assetQuantityTo: U64 = order.assetQuantityTo;
 
-  // If not production mode
+  // If not production mode. Always Calculate rate with wcc as denominator
+  /* FIXME - TEMP
   if (marketId === 0) {
     if (assetTypeFrom.toJSON() === FEE_ASSET_TYPE) {
       return assetQuantityTo.value
@@ -260,6 +263,9 @@ function getRate(order: Order, marketId: number): number | null {
         .dividedBy(assetQuantityTo.value)
         .toNumber();
     }
+  }*/
+  if (marketId === 0) {
+    return 0;
   }
 
   // Get market information
@@ -462,15 +468,22 @@ async function matchSame(
       shardId: relayedOrder.shardIdFrom
     });
   }
+
+  // FIXME - TEMP
+  const feeInput = incomingInputs.pop();
+
   let amount: number = 0;
   for (const input of incomingInputs) {
     amount += input.prevOut.quantity.value.toNumber();
   }
+  const remainedAsset =
+    amount - incomingOrder.assetQuantityFrom.value.toNumber();
+  /* FIXME - TEMP
   const remainedAsset = isFeePayingOrder
     ? amount -
-      incomingOrder.assetQuantityFrom.value.toNumber() -
-      incomingOrder.assetQuantityFee.value.toNumber()
-    : amount - incomingOrder.assetQuantityTo.value.toNumber();
+    incomingOrder.assetQuantityFrom.value.toNumber() -
+    incomingOrder.assetQuantityFee.value.toNumber()
+    : amount - incomingOrder.assetQuantityFrom.value.toNumber();*/
   if (remainedAsset > 0) {
     transferTx.addOutputs({
       recipient: incomingOrderAddress,
@@ -482,21 +495,33 @@ async function matchSame(
 
   // Add fee payment Output
   if (isFeePayingOrder) {
-    transferTx.addOutputs({
-      recipient: assetAddress,
-      quantity: incomingOrder.assetQuantityFee,
-      assetType: incomingOrder.assetTypeFee,
-      shardId: incomingOrder.shardIdFee
-    });
+    transferTx.addOutputs(
+      {
+        recipient: DEX_ASSET_ADDRESS,
+        quantity: incomingOrder.assetQuantityFee,
+        assetType: incomingOrder.assetTypeFee,
+        shardId: incomingOrder.shardIdFee
+      },
+      {
+        recipient: incomingOrderAddress,
+        quantity: feeInput.prevOut.quantity.minus(
+          incomingOrder.assetQuantityFee
+        ),
+        assetType: incomingOrder.assetTypeFee,
+        shardId: incomingOrder.shardIdFee
+      }
+    );
   } else {
     transferTx.addOutputs({
-      recipient: assetAddress,
+      recipient: DEX_ASSET_ADDRESS,
       quantity: relayedOrder.assetQuantityFee,
       assetType: relayedOrder.assetTypeFee,
       shardId: relayedOrder.shardIdFee
     });
   }
 
+  // FIXME - TEMP
+  incomingInputs.push(feeInput);
   // Add order
   transferTx
     .addOrder({
@@ -511,7 +536,7 @@ async function matchSame(
       inputIndices: _.range(relayedInputs.length + incomingInputs.length).slice(
         relayedInputs.length
       ),
-      outputIndices: isFeePayingOrder ? [1, 3, 4] : [1, 3]
+      outputIndices: isFeePayingOrder ? [1, 3, 4, 5] : [1, 3]
     });
 
   // FIXME - Confirm the splitTx if exists
@@ -524,7 +549,7 @@ async function matchSame(
 
   // Confirm the order transaction
   await sdk.rpc.chain.sendTransaction(transferTx, {
-    account: platformAddress,
+    account: DEX_PLATFORM_ADDRESS,
     passphrase: passpharase
   });
   const transferTxResults = await sdk.rpc.chain.getTransactionResultsByTracker(

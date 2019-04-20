@@ -17,7 +17,8 @@
   "linterOptions": {
     "exclude": [
       "node_modules/**/*.ts",
-      "server/**/*.json"
+      "server/**/*.json",
+      "server/**/*.test.ts"
     ]
   }
 }

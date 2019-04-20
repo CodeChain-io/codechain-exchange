@@ -1,8 +1,0 @@
-{
-  "swagger": "2.0",
-  "info": {
-    "version": "1.0.0",
-    "title": "The CodeChain-Exchange",
-    "description": "Decentralized exchange platform for the CodeChain assets"
-  }
-}
