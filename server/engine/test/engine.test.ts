@@ -23,6 +23,21 @@ describe("Order matching basic test", () => {
       server: rpcServer,
       networkId: "tc"
     });
+
+    const ACCOUNT_SECRET =
+      process.env.ACCOUNT_SECRET ||
+      "ede1d4ccb4ec9a8bbbae9a13db3f4a7b56ea04189be86ac3a6a439d9a0a1addd";
+    const ACCOUNT_PASSPHRASE = process.env.ACCOUNT_PASSPHRASE || "satoshi";
+    try {
+      await sdk.rpc.account.importRaw(
+        ACCOUNT_SECRET,
+        ACCOUNT_PASSPHRASE
+      );
+    } catch (error) {
+      if (error.message !== "Already Exists") {
+        console.error(error);
+      }
+    }
   });
 
   let aliceAddress: AssetAddress;
@@ -32,7 +47,7 @@ describe("Order matching basic test", () => {
   let silver: Asset;
   let wccc: Asset;
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.timeout(50000);
     aliceAddress = await sdk.key.createAssetAddress({ type: "P2PKH" });
     bobAddress = await sdk.key.createAssetAddress({ type: "P2PKH" });
