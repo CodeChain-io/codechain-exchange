@@ -11,6 +11,14 @@ Decentralized exchange platform for an asset on the CodeChain
 # cp codechain-exchange
 ```
 
+### Prerequisites
+
+```
+# yarn install
+# yarn migration
+# sudo service postgresql start
+```
+
 ## Start server
 
 ```
@@ -28,13 +36,6 @@ Decentralized exchange platform for an asset on the CodeChain
 ```
 # cd client
 # yarn serve
-```
-
-### Prerequisites
-
-```
-# yarn install
-# cd client; yarn install
 ```
 
 ## Running the tests
