@@ -3,6 +3,17 @@ import dealRout from "./deal";
 import orderRoute from "./order";
 
 export default function route(app: express.Express) {
+  /**
+   * @swagger
+   * /api:
+   *   get:
+   *     tags:
+   *       - api
+   *     description: api
+   *     responses:
+   *       200:
+   *         description: Welcome message
+   */
   app.get("/api", (_, res) => {
     res.status(200).send({
       message: "Welcome to the DEX API!"

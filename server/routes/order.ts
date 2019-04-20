@@ -9,8 +9,43 @@ import * as express from "express";
 import { controllers } from "../controllers";
 import { engine } from "../engine";
 
+/**
+ * @swagger
+ * definition:
+ *   orders:
+ *     properties:
+ *       makerAsset:
+ *         type: string
+ *       takerAsset:
+ *         type: string
+ *       amount:
+ *         type: integer
+ *       rate:
+ *          type: double
+ *       makerAddress:
+ *          type: string
+ *       assetList:
+ *          type: JSON
+ *       order:
+ *          type: JSON
+ *       splitTx:
+ *          type: JSON
+ */
 export default function orderRoute(app: express.Express) {
-  app.get("/api/order", (req, res) => {
+  /**
+   * @swagger
+   * /api/orders:
+   *   get:
+   *     tags:
+   *       - orders
+   *     description: Returns orders
+   *     responses:
+   *       201:
+   *         description: An array of orders
+   *         schema:
+   *           $ref: '#/definitions/orders'
+   */
+  app.get("/api/orders", (req, res) => {
     controllers.orderController
       .find(
         req.query.makerAsset,
@@ -27,7 +62,25 @@ export default function orderRoute(app: express.Express) {
       .catch(err => res.status(400).send(err));
   });
 
-  app.post("/api/order", (req, res) => {
+  /**
+   * @swagger
+   * /api/orders:
+   *   post:
+   *     tags:
+   *       - orders
+   *     description: Creates a new order
+   *     parameters:
+   *       - name: assetList
+   *         description: list of assets
+   *         in: body
+   *         required: true
+   *         schema:
+   *           $ref: '#/definitions/orders'
+   *     responses:
+   *       201:
+   *         description: Successfully created
+   */
+  app.post("/api/orders", (req, res) => {
     try {
       let assetList: AssetTransferInput[];
       let order: Order;
