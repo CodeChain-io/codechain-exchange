@@ -2,25 +2,25 @@ import * as chai from "chai";
 import { AssetAddress, H160 } from "codechain-primitives";
 import { SDK } from "codechain-sdk";
 import { Asset } from "codechain-sdk/lib/core/Asset";
-import { rpcServer } from "../../../app";
 import * as Config from "../../config/dex.json";
 import { controllers } from "../../controllers";
 import db from "../../models";
 import { submit } from "../matching";
 
 const expect = chai.expect;
-const DEX_ASSET_ADDRESS = Config["dex-asset-address"];
-const DEX_PLATFORM_ADDRESS = Config["dex-platform-address"];
-const DEX_PASSPHRASE = Config["dex-passphrase"];
+const ASSET_ADDRESS = Config["test-asset-address"];
+const PLATFORM_ADDRESS = Config["test-platform-address"];
+const PASSPHRASE = Config["test-passphrase"];
 const FEE_ASSET_TYPE = Config["fee-asset-type"];
 
 describe("Order matching basic test", () => {
   let sdk: SDK;
   const shardId = 0;
 
-  before(async () => {
+  before(async function () {
+    this.timeout(50000);
     sdk = new SDK({
-      server: rpcServer,
+      server: "http://127.0.0.1:8080",
       networkId: "tc"
     });
 
@@ -29,10 +29,7 @@ describe("Order matching basic test", () => {
       "ede1d4ccb4ec9a8bbbae9a13db3f4a7b56ea04189be86ac3a6a439d9a0a1addd";
     const ACCOUNT_PASSPHRASE = process.env.ACCOUNT_PASSPHRASE || "satoshi";
     try {
-      await sdk.rpc.account.importRaw(
-        ACCOUNT_SECRET,
-        ACCOUNT_PASSPHRASE
-      );
+      await sdk.rpc.account.importRaw(ACCOUNT_SECRET, ACCOUNT_PASSPHRASE);
     } catch (error) {
       if (error.message !== "Already Exists") {
         console.error(error);
@@ -68,8 +65,8 @@ describe("Order matching basic test", () => {
       recipient: aliceAddress
     });
     await sdk.rpc.chain.sendTransaction(goldMintTx, {
-      account: DEX_PLATFORM_ADDRESS,
-      passphrase: DEX_PASSPHRASE
+      account: PLATFORM_ADDRESS,
+      passphrase: PASSPHRASE
     });
     const goldMintTxResults = await sdk.rpc.chain.getTransactionResultsByTracker(
       goldMintTx.tracker(),
@@ -100,8 +97,8 @@ describe("Order matching basic test", () => {
       recipient: bobAddress
     });
     await sdk.rpc.chain.sendTransaction(silverMintTx, {
-      account: DEX_PLATFORM_ADDRESS,
-      passphrase: DEX_PASSPHRASE
+      account: PLATFORM_ADDRESS,
+      passphrase: PASSPHRASE
     });
     const silverMintTxResults = await sdk.rpc.chain.getTransactionResultsByTracker(
       silverMintTx.tracker(),
@@ -121,11 +118,11 @@ describe("Order matching basic test", () => {
       shardId: 0,
       recipient: bobAddress,
       quantity: 1000,
-      payer: DEX_PLATFORM_ADDRESS
+      payer: PLATFORM_ADDRESS
     });
     const hash = await sdk.rpc.chain.sendTransaction(wrapCCC, {
-      account: DEX_PLATFORM_ADDRESS,
-      passphrase: DEX_PASSPHRASE
+      account: PLATFORM_ADDRESS,
+      passphrase: PASSPHRASE
     });
     const result = await sdk.rpc.chain.containsTransaction(hash);
     expect(result).to.equal(true);
@@ -167,7 +164,7 @@ describe("Order matching basic test", () => {
         expiration,
         originOutputs: [silverInput.prevOut, wcccInput.prevOut],
         recipientFrom: bobAddress,
-        recipientFee: DEX_ASSET_ADDRESS
+        recipientFee: ASSET_ADDRESS
       });
       await sdk.key.signTransactionInputWithOrder(silverInput, orderB);
       await sdk.key.signTransactionInputWithOrder(wcccInput, orderB);

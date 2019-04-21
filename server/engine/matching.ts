@@ -20,9 +20,10 @@ const rpcServer: string = require("../config/dex.json").node[env].rpc;
 const sdk = new SDK({ server: rpcServer });
 const DEX_PLATFORM_ADDRESS = Config["dex-platform-address"];
 const DEX_ASSET_ADDRESS = Config["dex-asset-address"];
-const passpharase = Config["dex-passphrase"];
+// const passpharase = Config["dex-passphrase"];
 const FEE_RATE = Config["fee-rate"];
 const FEE_ASSET_TYPE = Config["fee-asset-type"];
+const DEX_SECRET = Config["dex-secret"];
 
 interface MarketIndexSig {
   [key: string]: { id: number; asset1: string; asset2: string };
@@ -458,8 +459,8 @@ async function matchSame(
   const relayedRemainedAsset = isFeePayingOrder
     ? relayedAmount - relayedOrder.assetQuantityFrom.value.toNumber()
     : relayedAmount -
-      relayedOrder.assetQuantityFrom.value.toNumber() -
-      relayedOrder.assetQuantityFee.value.toNumber();
+    relayedOrder.assetQuantityFrom.value.toNumber() -
+    relayedOrder.assetQuantityFee.value.toNumber();
   if (relayedRemainedAsset > 0) {
     transferTx.addOutputs({
       recipient: relayedOrderAddress,
@@ -548,10 +549,14 @@ async function matchSame(
   }
 
   // Confirm the order transaction
-  await sdk.rpc.chain.sendTransaction(transferTx, {
-    account: DEX_PLATFORM_ADDRESS,
-    passphrase: passpharase
-  });
+  const seq = await sdk.rpc.chain.getSeq(DEX_PLATFORM_ADDRESS);
+  await sdk.rpc.chain.sendSignedTransaction(
+    transferTx.sign({
+      secret: DEX_SECRET,
+      fee: 10,
+      seq
+    })
+  );
   const transferTxResults = await sdk.rpc.chain.getTransactionResultsByTracker(
     transferTx.tracker(),
     {
