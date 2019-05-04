@@ -559,7 +559,7 @@ async function matchSame(
     await sdk.rpc.chain.sendSignedTransaction(
       transferTx.sign({
         secret: ACCOUNT_SECRET_DEV,
-        fee: 10,
+        fee: 100,
         seq
       })
     );
@@ -569,7 +569,7 @@ async function matchSame(
     await sdk.rpc.chain.sendSignedTransaction(
       transferTx.sign({
         secret: ACCOUNT_SECRET_TEST,
-        fee: 10,
+        fee: 100,
         seq
       })
     );
@@ -584,7 +584,7 @@ async function matchSame(
     await sdk.key.signTransaction(transferTx, {
       keyStore,
       account: platformAddress[0],
-      fee: 10,
+      fee: 100,
       seq
     });
   }
