@@ -17,7 +17,8 @@ import { OrderAttriubutes, OrderInstance } from "../models/order";
 
 const env: string = process.env.NODE_ENV || "development";
 const rpcServer: string = require("../config/dex.json").node[env].rpc;
-const sdk = new SDK({ server: rpcServer });
+const networkId: string = require("../config/dex.json").node[env]["network-id"];
+const sdk = new SDK({ server: rpcServer, networkId });
 const DEX_ASSET_ADDRESS = Config["dex-asset-address"];
 // const passpharase = Config["dex-passphrase"];
 const FEE_RATE = Config["fee-rate"];
@@ -463,8 +464,8 @@ async function matchSame(
   const relayedRemainedAsset = isFeePayingOrder
     ? relayedAmount - relayedOrder.assetQuantityFrom.value.toNumber()
     : relayedAmount -
-      relayedOrder.assetQuantityFrom.value.toNumber() -
-      relayedOrder.assetQuantityFee.value.toNumber();
+    relayedOrder.assetQuantityFrom.value.toNumber() -
+    relayedOrder.assetQuantityFee.value.toNumber();
   if (relayedRemainedAsset > 0) {
     transferTx.addOutputs({
       recipient: relayedOrderAddress,
