@@ -81,31 +81,30 @@ export default function orderRoute(app: express.Express) {
    *         description: Successfully created
    */
   app.post("/api/orders", (req, res) => {
-    try {
-      let assetList: AssetTransferInput[];
-      let order: Order;
-      let makerAddress: string;
-      let splitTx: Transaction;
-      try {
-        assetList = (req.body.assetList as AssetTransferInputJSON[]).map(
-          input => AssetTransferInput.fromJSON(input)
-        );
-        order = Order.fromJSON(req.body.order);
-        makerAddress = req.body.makerAddress;
-        splitTx = req.body.splitTx
-          ? fromJSONToTransaction(req.body.splitTx)
-          : null;
-      } catch (error) {
-        throw Error("Fail to parse arguments");
-      }
 
-      engine.matching
-        .submit(assetList, order, makerAddress, splitTx)
-        .then((_: any) => {
-          res.status(201).send({ message: "success" });
-        });
+    let assetList: AssetTransferInput[];
+    let order: Order;
+    let makerAddress: string;
+    let splitTx: Transaction;
+    try {
+      assetList = (req.body.assetList as AssetTransferInputJSON[]).map(
+        input => AssetTransferInput.fromJSON(input)
+      );
+      order = Order.fromJSON(req.body.order);
+      makerAddress = req.body.makerAddress;
+      splitTx = req.body.splitTx
+        ? fromJSONToTransaction(req.body.splitTx)
+        : null;
     } catch (error) {
-      res.status(400).send(error.message);
+      throw Error("Fail to parse arguments");
     }
+
+    engine.matching
+      .submit(assetList, order, makerAddress, splitTx)
+      .then((_: any) => {
+        res.status(201).send({ message: "success" });
+      }).catch((error) => {
+        res.status(400).send(error);
+      })
   });
 }
