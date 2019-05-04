@@ -18,12 +18,16 @@ import { OrderAttriubutes, OrderInstance } from "../models/order";
 const env: string = process.env.NODE_ENV || "development";
 const rpcServer: string = require("../config/dex.json").node[env].rpc;
 const sdk = new SDK({ server: rpcServer });
-const DEX_PLATFORM_ADDRESS = Config["dex-platform-address"];
 const DEX_ASSET_ADDRESS = Config["dex-asset-address"];
 // const passpharase = Config["dex-passphrase"];
 const FEE_RATE = Config["fee-rate"];
 const FEE_ASSET_TYPE = Config["fee-asset-type"];
-const DEX_SECRET = Config["dex-secret"];
+
+const ACCOUNT_SECRET_TEST = Config["test-secret"];
+const ACCOUNT_ADDRESS_TEST = Config["test-account"];
+const ACCOUNT_SECRET_DEV =
+  "ede1d4ccb4ec9a8bbbae9a13db3f4a7b56ea04189be86ac3a6a439d9a0a1addd";
+const ACCOUNT_ADDRESS_DEV = "tccq9h7vnl68frvqapzv3tujrxtxtwqdnxw6yamrrgd";
 
 interface MarketIndexSig {
   [key: string]: { id: number; asset1: string; asset2: string };
@@ -459,8 +463,8 @@ async function matchSame(
   const relayedRemainedAsset = isFeePayingOrder
     ? relayedAmount - relayedOrder.assetQuantityFrom.value.toNumber()
     : relayedAmount -
-    relayedOrder.assetQuantityFrom.value.toNumber() -
-    relayedOrder.assetQuantityFee.value.toNumber();
+      relayedOrder.assetQuantityFrom.value.toNumber() -
+      relayedOrder.assetQuantityFee.value.toNumber();
   if (relayedRemainedAsset > 0) {
     transferTx.addOutputs({
       recipient: relayedOrderAddress,
@@ -549,14 +553,41 @@ async function matchSame(
   }
 
   // Confirm the order transaction
-  const seq = await sdk.rpc.chain.getSeq(DEX_PLATFORM_ADDRESS);
-  await sdk.rpc.chain.sendSignedTransaction(
-    transferTx.sign({
-      secret: DEX_SECRET,
+  if (env === "development") {
+    const seq = await sdk.rpc.chain.getSeq(ACCOUNT_ADDRESS_DEV);
+    await sdk.rpc.chain.sendSignedTransaction(
+      transferTx.sign({
+        secret: ACCOUNT_SECRET_DEV,
+        fee: 10,
+        seq
+      })
+    );
+  } else if (env === "test") {
+    // Run on Corgi test network
+    const seq = await sdk.rpc.chain.getSeq(ACCOUNT_ADDRESS_TEST);
+    await sdk.rpc.chain.sendSignedTransaction(
+      transferTx.sign({
+        secret: ACCOUNT_SECRET_TEST,
+        fee: 10,
+        seq
+      })
+    );
+  } else {
+    // Run on main network
+    const keyStore = await sdk.key.createLocalKeyStore("../config/keystore.db");
+    const platformAddress = await keyStore.platform.getKeyList();
+
+    // Local keystore should store only one key. If not, which key will be used is undefined.
+    const seq = await sdk.rpc.chain.getSeq(platformAddress[0]);
+
+    await sdk.key.signTransaction(transferTx, {
+      keyStore,
+      account: platformAddress[0],
       fee: 10,
       seq
-    })
-  );
+    });
+  }
+
   const transferTxResults = await sdk.rpc.chain.getTransactionResultsByTracker(
     transferTx.tracker(),
     {

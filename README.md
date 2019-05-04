@@ -11,13 +11,21 @@ Decentralized exchange platform for an asset on the CodeChain
 # cp codechain-exchange
 ```
 
-### Prerequisites
+## Prerequisites
 
 ```
 # yarn install
-# yarn migration
 # sudo service postgresql start
+# yarn migration
 ```
+
+### Account setting
+#### Development mode
+Matched transactions are signed by secret. You don't actually need to do nothing
+#### Test mode
+Matched transactions are singed by secret. You need to add platform and its secret into the `/server/config/dex.json`
+#### Production mode
+Matched transactions are signed with the local keystore `/server/config/keystore.db`. The local keystore should store only one key.
 
 ## Start server
 

@@ -8,16 +8,16 @@ import db from "../../models";
 import { submit } from "../matching";
 
 const expect = chai.expect;
-const ASSET_ADDRESS = Config["test-asset-address"];
-const PLATFORM_ADDRESS = Config["test-platform-address"];
-const PASSPHRASE = Config["test-passphrase"];
+const ASSET_ADDRESS = Config["dex-asset-address"];
+const PLATFORM_ADDRESS = "tccq9h7vnl68frvqapzv3tujrxtxtwqdnxw6yamrrgd";
+const PASSPHRASE = "satoshi";
 const FEE_ASSET_TYPE = Config["fee-asset-type"];
 
 describe("Order matching basic test", () => {
   let sdk: SDK;
   const shardId = 0;
 
-  before(async function () {
+  before(async function() {
     this.timeout(50000);
     sdk = new SDK({
       server: "http://127.0.0.1:8080",
@@ -44,7 +44,7 @@ describe("Order matching basic test", () => {
   let silver: Asset;
   let wccc: Asset;
 
-  beforeEach(async function () {
+  beforeEach(async function() {
     this.timeout(50000);
     aliceAddress = await sdk.key.createAssetAddress({ type: "P2PKH" });
     bobAddress = await sdk.key.createAssetAddress({ type: "P2PKH" });
