@@ -81,14 +81,13 @@ export default function orderRoute(app: express.Express) {
    *         description: Successfully created
    */
   app.post("/api/orders", (req, res) => {
-
     let assetList: AssetTransferInput[];
     let order: Order;
     let makerAddress: string;
     let splitTx: Transaction;
     try {
-      assetList = (req.body.assetList as AssetTransferInputJSON[]).map(
-        input => AssetTransferInput.fromJSON(input)
+      assetList = (req.body.assetList as AssetTransferInputJSON[]).map(input =>
+        AssetTransferInput.fromJSON(input)
       );
       order = Order.fromJSON(req.body.order);
       makerAddress = req.body.makerAddress;
@@ -103,8 +102,10 @@ export default function orderRoute(app: express.Express) {
       .submit(assetList, order, makerAddress, splitTx)
       .then((_: any) => {
         res.status(201).send({ message: "success" });
-      }).catch((error) => {
-        res.status(400).send(error);
       })
+      .catch(error => {
+        console.log(error);
+        res.status(400).send(error);
+      });
   });
 }

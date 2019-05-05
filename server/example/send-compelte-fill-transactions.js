@@ -11,11 +11,11 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 const ACCOUNT_ADDRESS = "tccq9h7vnl68frvqapzv3tujrxtxtwqdnxw6yamrrgd";
 const ACCOUNT_SECRET = "ede1d4ccb4ec9a8bbbae9a13db3f4a7b56ea04189be86ac3a6a439d9a0a1addd";
 const FEE_ASSET_TYPE = "0x0000000000000000000000000000000000000000";
+const DEX_ASSET_ADDRESS = require("../config/dex.json")["dex-asset-address"].development;
 
 
 const shardId = 0;
 (async () => {
-    const DEX_ASSET_ADDRESS = await sdk.key.createAssetAddress();
     const aliceAddress = await sdk.key.createAssetAddress({
         type: "P2PKH"
     });
@@ -165,7 +165,7 @@ const shardId = 0;
         .catch(function (error) {
             console.log(error);
         });
-    await delay(10000)
+    await delay(1000)
 
     await axios.post('http://localhost:8448/api/orders', {
             assetList: [silverInput, wcccInput],
