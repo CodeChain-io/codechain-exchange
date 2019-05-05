@@ -80,3 +80,41 @@ In development and test environment, market ID of transaction is `0`.
 s far as market ID is `0`, the engine does not apply market rules on the transactions.
 On the other hand, in production mode, all the transactions have to meet the market rules
 
+## dex.json
+__structure__
+```json
+{
+  "dex-asset-address": {
+    "production": "",
+    "test": "",
+    "development": ""
+  },
+  "dex-passphrase": "",
+  "fee-rate": ,
+  "fee-asset-type": "0x0000000000000000000000000000000000000000",
+  "test-account": "",
+  "test-secret": "",
+  "market": {
+    "testMarket": {
+      "id": 0,
+      "asset1": "0x",
+      "asset2": "0x"
+    }
+  },
+  "node": {
+    "production": {
+      "rpc": "https://rpc.codechain.io/",
+      "network-id": "cc"
+    },
+    "test": {
+      "rpc": "https://corgi-rpc.codechain.io",
+      "network-id": "wc"
+    },
+    "development": {
+      "rpc": "http://127.0.0.1:8080",
+      "network-id": "tc"
+    }
+  }
+}
+
+```
