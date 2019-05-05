@@ -222,9 +222,10 @@ function checkOrderTx(inputs: AssetTransferInput[], order: Order): void {
     }
   }
 
+  // FIXME -  Check feeRecipient is the DEX address by feeParameter
+
   // Check if there is sufficient amount of asset
   // Fee
-
   if (!order.assetQuantityFee.eq(0)) {
     if (
       assets.has(order.assetTypeFee.toJSON()) === false ||
