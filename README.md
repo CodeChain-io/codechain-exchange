@@ -20,6 +20,7 @@ Decentralized exchange platform for an asset on the CodeChain
 ```
 
 ### Account setting
+Before All, you need to set a fee recipient asset address in the `/server/config/dex.json`
 #### Development mode
 Matched transactions are signed by secret. You don't actually need to do nothing
 #### Test mode
