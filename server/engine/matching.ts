@@ -41,23 +41,29 @@ export async function submit(
   makerAddress: string,
   splitTx?: Transaction
 ): Promise<void | SignedTransactionJSON> {
-  let isSplit: boolean = null;
+  let isSplit: boolean = true;
+
+  // Check the split transaction is along with the order transaction
   if (splitTx === null) {
     isSplit = false;
-    console.log("splitTx is not along with orderTx " + isSplit);
   }
 
+  // Check if the incoming transaction is fee paying transaction
   const assetTypeFrom: H256 = order.assetTypeFrom;
-  const isFeePayingOrder: boolean =
+  let isFeePayingOrder: boolean =
     assetTypeFrom.toJSON() === FEE_ASSET_TYPE ? true : false;
+  if (env !== "production") {
+    isFeePayingOrder = true;
+  }
 
+  // Check the validity of the order
   const marketId = checkTX(
     assetList,
     order,
     isSplit,
-    isFeePayingOrder,
     splitTx
   );
+
   const rate = getRate(order, marketId);
 
   const assetTypeTo: H256 = order.assetTypeTo;
@@ -80,31 +86,18 @@ export async function submit(
   );
   // In case that there is no any matched orders
   if (orders.length === 0) {
-    if (isSplit) {
-      await controllers.orderController.create(
-        assetTypeFrom.toJSON(),
-        assetTypeTo.toJSON(),
-        assetQuantityFrom,
-        rate,
-        makerAddress,
-        JSON.parse(JSON.stringify(assetList.map(input => input.toJSON()))),
-        JSON.parse(JSON.stringify(order.toJSON())),
-        JSON.parse(JSON.stringify(splitTx.toJSON())),
-        marketId
-      );
-    } else {
-      await controllers.orderController.create(
-        assetTypeFrom.toJSON(),
-        assetTypeTo.toJSON(),
-        assetQuantityFrom,
-        rate,
-        makerAddress,
-        JSON.parse(JSON.stringify(assetList.map(input => input.toJSON()))),
-        JSON.parse(JSON.stringify(order.toJSON())),
-        null,
-        marketId
-      );
-    }
+    const splitTransaction = isSplit ? JSON.parse(JSON.stringify(splitTx.toJSON())) : null;
+    await controllers.orderController.create(
+      assetTypeFrom.toJSON(),
+      assetTypeTo.toJSON(),
+      assetQuantityFrom,
+      rate,
+      makerAddress,
+      JSON.parse(JSON.stringify(assetList.map(input => input.toJSON()))),
+      JSON.parse(JSON.stringify(order.toJSON())),
+      splitTransaction,
+      marketId
+    );
 
     return null;
   }
@@ -117,7 +110,7 @@ export async function submit(
     makerAddress,
     rate,
     marketId,
-    true, // FIXME - TEMP
+    isFeePayingOrder,
     splitTx
   );
   // FIXME - register UTXO and expiration date to order watcher
@@ -129,7 +122,6 @@ function checkTX(
   inputs: AssetTransferInput[],
   order: Order,
   isSplit: boolean,
-  isFeePayingOrder: boolean,
   splitTx?: Transaction
 ): number {
   // Check if unlock scripts in inputs of the orderTx are valid
@@ -257,21 +249,11 @@ function getRate(order: Order, marketId: number): number | null {
   const assetQuantityFrom: U64 = order.assetQuantityFrom;
   const assetQuantityTo: U64 = order.assetQuantityTo;
 
-  // If not production mode. Always Calculate rate with wcc as denominator
-  /* FIXME - TEMP
+  // If not production mode. Always Calculate rate as assetTypeTo/assetTypeFrom
   if (marketId === 0) {
-    if (assetTypeFrom.toJSON() === FEE_ASSET_TYPE) {
-      return assetQuantityTo.value
-        .dividedBy(assetQuantityFrom.value)
-        .toNumber();
-    } else {
-      return assetQuantityFrom.value
-        .dividedBy(assetQuantityTo.value)
-        .toNumber();
-    }
-  }*/
-  if (marketId === 0) {
-    return 0;
+    return assetQuantityTo.value
+      .dividedBy(assetQuantityFrom.value)
+      .toNumber();
   }
 
   // Get market information
@@ -407,7 +389,7 @@ async function matchOrder(
       );
       return null;
     }
-    // In case that matched order is fully filled and there is a remain amount in a incoming order
+    // In case that incoming order is partially filled
     else {
       const updated = await matchBelow(
         relayedInputs,
@@ -424,6 +406,7 @@ async function matchOrder(
   }
 }
 
+// Complete fill
 async function matchSame(
   relayedInputs: AssetTransferInput[],
   incomingInputs: AssetTransferInput[],
@@ -607,6 +590,7 @@ async function matchSame(
   return;
 }
 
+// Matched order is partially filled
 async function matchAbove(
   relayedInputs: AssetTransferInput[],
   inputs: AssetTransferInput[],
@@ -685,6 +669,7 @@ async function matchAbove(
   // FIXME - Confirm the transaction and update ramain order
 }
 
+// Incoming order is partially filled
 async function matchBelow(
   relayedInputs: AssetTransferInput[],
   inputs: AssetTransferInput[],

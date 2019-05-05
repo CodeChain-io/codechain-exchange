@@ -73,3 +73,9 @@ Matched transactions are signed with the local keystore `/server/config/keystore
 ```
 # yarn fmt
 ```
+
+## Market ID
+In development and test environment, market ID of transaction is `0`.
+s far as market ID is `0`, the engine does not apply market rules on the transactions.
+On the other hand, in production mode, all the transactions have to meet the market rules
+
